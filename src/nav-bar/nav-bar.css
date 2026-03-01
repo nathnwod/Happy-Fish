@@ -1,0 +1,95 @@
+.nav-bar-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+
+
+    width: 100%;
+    height: 75px;
+    background-color: #4f4985;
+    z-index: 1000;
+
+    box-shadow: 0 10px 25px rgba(0,0,0,0.18);
+}
+
+.nav-bar{
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    color: white;    
+}
+
+
+.nav-bar-logo {
+    font-size: 2.5rem;
+    font-weight: bold;
+    font-family: "DynaPuff", system-ui;
+    margin-left: 2rem;
+    letter-spacing: 0.1rem;
+    
+
+
+    /* gradient text */
+    background: linear-gradient(
+    90deg,
+    #ffffff,
+    #c9c1ff,  /* lilac */
+    #7fe3ff,  /* aqua */
+    #84ffd1,  /* mint */
+    #ffffff
+    );
+
+    background-size: 200% 100%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+
+    position: relative;
+    text-shadow: 0 2px 12px rgba(0, 0, 0, 0.18);
+    animation: logoShimmer 4s linear infinite;
+
+}
+
+.nav-bar-logo::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -8px;
+  width: 100%;
+  height: 6px;
+}
+
+@keyframes logoShimmer {
+  0% { background-position: 0% 50%; }
+  100% { background-position: 200% 50%; }
+}
+
+.sign-in-register-button{
+    margin-right: 2rem;
+    display: flex;
+    align-items: center;
+
+    gap: .5rem;
+
+    background-color: #1e1c3b;
+    border-color: #938ae2c9;
+    cursor: pointer;
+    font: inherit;
+    padding: .6rem .8rem;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.20);
+
+}
+
+/* shimmer for the button label */
+.sign-in-register-button .btn-label{
+  font-weight: 700;
+  letter-spacing: .02em;
+}
+
+/* keep svg sized nicely */
+.sign-in-register-button svg{
+  width: 24px;
+  height: 24px;
+  flex: 0 0 24px;
+}
