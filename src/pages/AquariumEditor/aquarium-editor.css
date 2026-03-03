@@ -1,0 +1,22 @@
+#fish-input {
+  text-align: center;
+}
+
+#fish-input::placeholder {
+  text-align: center;
+}
+
+#quantity {
+  text-align: center;
+}
+
+#quantity::placeholder {
+  text-align: center;
+}
+#tank-size-input {
+  text-align: center;
+}
+
+#tank-size-input::placeholder {
+  text-align: center; /* helps in some browsers */
+}

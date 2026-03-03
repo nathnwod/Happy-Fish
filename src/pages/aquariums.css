@@ -1,0 +1,34 @@
+.aquariums-page {
+  width: 100vw;
+}
+
+.aquariums-container {
+  padding-top: 80px;
+  margin-top: 50px;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;   /* horizontal center */
+  align-items: flex-start;   /* stick to top */
+  text-align: center;
+}
+
+.aquariums-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 0 5rem;
+  
+  
+}
+
+.aquarium-card{
+  /* width: 100%; */
+  
+  
+}
+
+.add-tank-button {
+  background-color: #4f4985;
+  width: 250px;
+  height: 250px;;
+}
+

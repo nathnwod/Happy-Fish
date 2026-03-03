@@ -1,10 +1,17 @@
 import "./nav-bar.css";
+import { Link } from "react-router-dom";
+
 
 export default function NavBar() {
   return (
     <div className="nav-bar-container">
       <nav className="nav-bar">
-        <div className="nav-bar-logo shimmer-wave shimmer-wave-text">Happy Fish</div>
+
+        <Link 
+          to="/home" 
+          className="nav-bar-logo shimmer-wave shimmer-wave-text">Happy Fish
+        </Link>
+    
 
         <div className="log-in-sign-up">
           <button className="sign-in-register-button">

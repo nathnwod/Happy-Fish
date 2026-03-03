@@ -28,6 +28,7 @@ body {
   place-items: center;
   min-width: 320px;
   min-height: 100vh;
+  overflow-x: hidden;
 }
 
 h1 {
@@ -45,6 +46,8 @@ button {
   background-color: #1e1c3b;
   cursor: pointer;
   transition: border-color 0.25s;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.20);
+
 }
 button:hover {
   border-color: #d5d1ff;
