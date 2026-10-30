@@ -79,6 +79,21 @@ button:focus-visible {
   fill: url(#waveGradient);
 }
 
+/* shimmer colors for stocking status */
+.shimmer-good {
+  background-image: linear-gradient(90deg, #ffffff, #7fe3ff, #84ffd1, #c9c1ff, #ffffff);
+}
+
+.shimmer-moderate {
+  background-image: linear-gradient(90deg, #ffffff, #ffe9b8, #ffc46b, #ffa6d9, #ffffff);
+}
+
+.shimmer-bad {
+  background-image: linear-gradient(90deg, #ffffff, #ffb0c8, #ff5f8f, #d98cff, #ffffff);
+}
+
+
+
 @keyframes logoShimmer{
   0%{ background-position: 0% 50%; }
   100%{ background-position: 200% 50%; }

@@ -2,20 +2,27 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import './aquariums.css';
 
+
+type Tank = {
+  id: string
+  name: string
+}
+
 export default function Aquariums() {
-  const [tanks, setTanks] = useState([
+    const [tanks, setTanks] = useState<Tank[]>([
     { id: crypto.randomUUID(), name: "Create New Tank" },
   ]);
   const navigate = useNavigate();
 
-  function createTank(name) {
+
+  function createTank(name: string)  {
     setTanks((prev) => [...prev, {
       id: crypto.randomUUID(),
       name: name,
     }]);
   }
 
-  function deleteTank(id) {
+  function deleteTank(id: string) {
     setTanks((prev) => prev.filter((tank) => tank.id !== id));
   }
 

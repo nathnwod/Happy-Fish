@@ -1,3 +1,0 @@
-function calculateTempScore(minTemp, maxTemp) {
-    
-}
