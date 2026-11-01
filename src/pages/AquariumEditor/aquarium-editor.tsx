@@ -1,5 +1,5 @@
 import './aquarium-editor.css';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 const tankSizes = [
   { id: "10g", label: "10 Gallon", gallons: 10 },
@@ -19,17 +19,64 @@ const vegetationOptions = [
     {id: "heavy", label: "Heavily Planted"}
 ]
 
+type Fish = {
+    id: number
+    name: string
+    scientific_name: string
+    skill_level: string
+}
+
+type SelectedFish = {
+  id: string
+  name: string
+  quantity: number
+  skill_level: string
+}
+
 export default function AquariumEditor() {
     const [tankSize, setTankSize] = useState("");
     const [fishName, setFishName] = useState("");
     const [quantity, setQuantity] = useState(1)
     const [vegetationLevel, setVegetationLevel] = useState("")
+    const [fishList, setFishList] = useState<Fish[]>([])
+    const [selectedFishList, setSelectedFishList] = useState<SelectedFish[]>([]);
+
+    useEffect(() => {
+        fetch("http://127.0.0.1:8000/species")
+            .then((res) => res.json())
+            .then((data) => setFishList(data))
+    }, [])
 
     function addOne(){
-    setQuantity((prev) => prev + 1)
+        setQuantity((prev) => prev + 1)
+    }
+
+    function addFish(){
+        const alreadyAdded = selectedFishList.some((fish) => fish.name === fishName)
+        const matchedFish = fishList.find((fish) => fishName === `${fish.name} (${fish.scientific_name})`)
+
+        if (matchedFish && !alreadyAdded) {
+            setSelectedFishList((prev) => [...prev, {
+            id: crypto.randomUUID(),
+            name: fishName,
+            quantity: quantity,
+            skill_level: matchedFish.skill_level
+        }]);
+        }
+        if (alreadyAdded) {
+            setSelectedFishList((prev) => prev.map((fish) => {
+                if (fish.name === fishName) {
+                    return { ...fish, quantity: fish.quantity + quantity }
+                }
+                return fish
+            }))
+        }
+        setFishName('');
+        setQuantity(1);
     }
 
   return (
+    
     <div className="editor-page">
 
         {/* User aquarium preview section */}
@@ -68,27 +115,28 @@ export default function AquariumEditor() {
                             <option key={tankSize.id} value={tankSize.label} />
                         ))}
                     </datalist>
+                    
                 </div>
                 
                 
-                <div className="fish-species-section">
-                    <h3 className='fish-species-section-title'>Select Fish</h3>
-                    {/* fish search */}
-                    <input
-                        id="fish-input"
-                        list="fish-list"
-                        value={fishName}
-                        onChange={(e) => setFishName(e.target.value)}
-                        placeholder="Search Fish"
-                    />
-                    <datalist id="fish-list">
-                        {fishData.map((fish) => (
-                            <option key={fish.id} value={fish.name} />
-                        ))}
-                    </datalist>
-                </div>
-
-                <div className='fish-quantity-section'>
+                <div className='add-fish-main-section'>
+                    <div className="fish-species-section">
+                        <h3 className='fish-species-section-title'>Select Fish</h3>
+                        {/* fish search */}
+                        <input
+                            id="fish-input"
+                            list="fish-list"
+                            value={fishName}
+                            onChange={(e) => setFishName(e.target.value)}
+                            placeholder="Search Fish"
+                        />
+                        <datalist id="fish-list">
+                            {fishList.map((fish) => (
+                                <option key={fish.id} value={`${fish.name} (${fish.scientific_name})`}/>
+                            ))}
+                        </datalist>
+                    </div>
+                    <div className='fish-quantity-section'>
                     
                         <h3 className='fish-quantity-section-title'>Choose Quantity</h3>
                         <div className="quantity-field">
@@ -100,8 +148,10 @@ export default function AquariumEditor() {
                                 />
                                 <svg className="quantity-add-icon" onClick={addOne} xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="M440-280h80v-160h160v-80H520v-160h-80v160H280v80h160v160Zm40 200q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320Z"/></svg>
                             </div>
-
+                        </div>
                     </div>
+
+                    <button className='add-fish-btn' onClick={addFish}>Add Fish</button>
                 </div>
 
                 <div className="vegetation-section">
@@ -153,20 +203,29 @@ export default function AquariumEditor() {
                 <div className='current-fish-selection-section'>
                     <h3 className='current-fish-selection-section-title'>Your Fish:</h3>
                     <div className="fish-list">
-                        <div className="fish-item">
-                            <h4>{quantity}x Neon Tetra (Paracheirodon innesi)</h4>
-                            <div className="skill-level">
-                                <h4>Beginner</h4>
-                                <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="M440-280h80v-240h-80v240Zm68.5-331.5Q520-623 520-640t-11.5-28.5Q497-680 480-680t-28.5 11.5Q440-657 440-640t11.5 28.5Q463-600 480-600t28.5-11.5ZM480-80q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320Z"/></svg>
+                        {selectedFishList.map((fish) => (
+                            <div className="fish-item" key={fish.id}>
+                                <h4>{fish.quantity}x {fish.name}</h4> 
+                                <div className={`skill-level skill-${fish.skill_level.toLowerCase()}`}>
+                                    <h4>{fish.skill_level}</h4>
+                                    <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="M440-280h80v-240h-80v240Zm68.5-331.5Q520-623 520-640t-11.5-28.5Q497-680 480-680t-28.5 11.5Q440-657 440-640t11.5 28.5Q463-600 480-600t28.5-11.5ZM480-80q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320Z"/></svg>
+                                </div>
                             </div>
-                        </div>
+                        ))}
                         
+                            
                     </div>
+                        
                 </div>
 
-            </div>
+    
+                    
+                {/* <pre>{JSON.stringify(selectedFishList, null, 2)}</pre> */}
 
+            </div>
+                        
         </div>
     </div>
+    
   );
 }

@@ -104,8 +104,9 @@
 }
 
 .tank-size-section,
-.fish-species-section,
-.fish-quantity-section,
+/* .fish-species-section, */
+/* .fish-quantity-section, */
+.add-fish-main-section,
 .vegetation-section,
 .stocking-section,
 .compatibility-section,
@@ -120,6 +121,16 @@
   0 4px 6px rgba(0, 0, 0, 0.25),         /* tight shadow, makes it look lifted */
   0 10px 24px rgba(0, 0, 0, 0.35),       /* soft wide shadow, adds depth */
   0 0 0 1px rgba(147, 138, 226, 0.15);   /* faint purple edge */
+}
+
+.add-fish-main-section{
+  display: flex;
+  flex-direction: column;
+  gap: 2.5rem;
+}
+
+.add-fish-btn{
+  margin: 0 auto 0;
 }
 
 .tank-size-section input,
@@ -224,7 +235,7 @@
 .skill-level h4 {
   margin: 0;
   padding: .75rem;
-  background-color: #1f831f;
+  /* background-color: #1f831f; */
   border-radius: 8px;
 }
 
@@ -238,6 +249,10 @@
 .skill-level svg{
   cursor: pointer;
 }
+
+.skill-beginner h4{ background-color: #1f6f5c; }
+.skill-intermediate h4{ background-color: #9a6b12; }
+.skill-advanced h4{ background-color: #8a2f5a; }
 
 
 /* ============================================
