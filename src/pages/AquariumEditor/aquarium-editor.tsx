@@ -14,6 +14,7 @@ const fishData = [
 ];
 
 const vegetationOptions = [
+    {id: "none", label: "No Plants"},
     {id: "light", label: "Lightly Planted"},
     {id: "moderate", label: "Moderately Planted"},
     {id: "heavy", label: "Heavily Planted"}
@@ -33,22 +34,41 @@ type SelectedFish = {
   skill_level: string
 }
 
+type Tank = {
+    id: number
+    label: string
+    gallons: number
+}
+
 export default function AquariumEditor() {
     const [tankSize, setTankSize] = useState("");
     const [fishName, setFishName] = useState("");
     const [quantity, setQuantity] = useState(1)
     const [vegetationLevel, setVegetationLevel] = useState("")
     const [fishList, setFishList] = useState<Fish[]>([])
+    const [tankSizesList, setTankSizesList] = useState<Tank[]>([]);
     const [selectedFishList, setSelectedFishList] = useState<SelectedFish[]>([]);
+    
 
     useEffect(() => {
         fetch("http://127.0.0.1:8000/species")
             .then((res) => res.json())
             .then((data) => setFishList(data))
+        fetch("http://127.0.0.1:8000/tank_sizes")
+            .then((res) => res.json())
+            .then((data) => setTankSizesList(data))
     }, [])
+
+    
 
     function addOne(){
         setQuantity((prev) => prev + 1)
+    }
+
+    function subtractOne(){
+        if(quantity > 1){
+            setQuantity((prev) => prev - 1)
+        }
     }
 
     function addFish(){
@@ -73,6 +93,10 @@ export default function AquariumEditor() {
         }
         setFishName('');
         setQuantity(1);
+    }
+
+    function removeFish(id: string){
+        setSelectedFishList((prev) => prev.filter((fish) => fish.id != id))
     }
 
   return (
@@ -111,8 +135,8 @@ export default function AquariumEditor() {
                         placeholder="Search Sizes"
                     />
                     <datalist id="tank-size-list">
-                        {tankSizes.map((tankSize) => (
-                            <option key={tankSize.id} value={tankSize.label} />
+                        {tankSizesList.map((tank) => (
+                            <option key={tank.id} value={tank.label} />
                         ))}
                     </datalist>
                     
@@ -146,6 +170,7 @@ export default function AquariumEditor() {
                                     value={quantity}
                                     readOnly
                                 />
+                                <svg className="quantity-subtract-icon" onClick={subtractOne} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" height="24px" width="24px" fill="#e3e3e3"><path d="M7,13H17V11H7v2Zm5,9q-2.07,0-3.9-0.79q-1.82-0.79-3.17-2.14Q3.58,17.73 2.79,15.9T2,12Q2,9.92 2.79,8.1Q3.58,6.27 4.93,4.93Q6.28,3.57 8.1,2.79Q9.93,2 12,2t3.9,0.79t3.17,2.14q1.35,1.35 2.14,3.17Q22,9.92 22,12t-0.79,3.9t-2.14,3.17q-1.35,1.35-3.17,2.14T12,22Zm0-2q3.35,0 5.68-2.32T20,12T17.68,6.32T12,4T6.33,6.32T4,12t2.33,5.68T12,20Zm0-8Z"/></svg>
                                 <svg className="quantity-add-icon" onClick={addOne} xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="M440-280h80v-160h160v-80H520v-160h-80v160H280v80h160v160Zm40 200q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320Z"/></svg>
                             </div>
                         </div>
@@ -205,6 +230,9 @@ export default function AquariumEditor() {
                     <div className="fish-list">
                         {selectedFishList.map((fish) => (
                             <div className="fish-item" key={fish.id}>
+                                <div className='remove-fish-icon-container'>
+                                    <svg className="remove-fish-icon" onClick={() => removeFish(fish.id)} xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="#e3e3e3"><path d="M280-120q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm400-600H280v520h400v-520ZM360-280h80v-360h-80v360Zm160 0h80v-360h-80v360ZM280-720v520-520Z"/></svg>
+                                </div>
                                 <h4>{fish.quantity}x {fish.name}</h4> 
                                 <div className={`skill-level skill-${fish.skill_level.toLowerCase()}`}>
                                     <h4>{fish.skill_level}</h4>

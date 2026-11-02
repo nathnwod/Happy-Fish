@@ -118,9 +118,9 @@
   margin: 0 0 1rem 0; 
 
   box-shadow:
-  0 4px 6px rgba(0, 0, 0, 0.25),         /* tight shadow, makes it look lifted */
-  0 10px 24px rgba(0, 0, 0, 0.35),       /* soft wide shadow, adds depth */
-  0 0 0 1px rgba(147, 138, 226, 0.15);   /* faint purple edge */
+  0 4px 6px rgba(0, 0, 0, 0.25),        
+  0 10px 24px rgba(0, 0, 0, 0.35),    
+  0 0 0 1px rgba(147, 138, 226, 0.15);  
 }
 
 .add-fish-main-section{
@@ -159,11 +159,15 @@
   gap: .5rem;
 }
 
-.quantity-add-icon{
+.quantity-add-icon,
+.quantity-subtract-icon
+{
   cursor: pointer;
   user-select: none;
   -webkit-user-select: none;   /* Safari */
 }
+
+
 
 .vegetation-level-options{
   display: flex;
@@ -229,14 +233,46 @@
 
 .fish-item{
   display: flex;
+  justify-content: space-between;
+  align-items: center;
   gap: .5rem;
 }
 
+.remove-fish-icon-container{
+  display: flex;
+  padding: .5rem;
+  margin-right: .5rem;
+  border-radius: 8px;
+  background-color: #1c1922;
+  cursor: pointer;
+
+  border: 1px solid transparent;
+
+  box-shadow:
+  0 4px 6px rgba(0, 0, 0, 0.25),        
+  0 10px 24px rgba(0, 0, 0, 0.35),       
+  0 0 0 1px rgba(147, 138, 226, 0.15);  
+}
+
+.remove-fish-icon-container:hover{
+  border-color: #938ae2;  
+}
+
+.remove-fish-icon {
+  flex-shrink: 0;   
+  width: 20px;
+  height: 20px;
+  
+}
+
+
+
 .skill-level h4 {
   margin: 0;
-  padding: .75rem;
+  padding: .5rem;
   /* background-color: #1f831f; */
   border-radius: 8px;
+  /* font-size: 0.9rem; */
 }
 
 .skill-level {

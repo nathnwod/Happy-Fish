@@ -28,3 +28,9 @@ def get_species():
     with get_connection() as conn:
         rows = conn.execute("SELECT * FROM species ORDER BY name").fetchall()
     return rows
+
+@app.get("/tank_sizes")
+def get_tank_sizes():
+    with get_connection() as conn:
+        rows = conn.execute("SELECT * FROM tank_sizes ORDER BY gallons").fetchall()
+    return rows
