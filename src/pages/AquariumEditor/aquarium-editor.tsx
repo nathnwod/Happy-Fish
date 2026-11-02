@@ -25,13 +25,19 @@ type Fish = {
     name: string
     scientific_name: string
     skill_level: string
+    adult_size_inches: number
+    weight_a: number
+    weight_b: number
 }
 
 type SelectedFish = {
-  id: string
-  name: string
-  quantity: number
-  skill_level: string
+    id: string
+    name: string
+    quantity: number
+    skill_level: string
+    adult_size_inches: number
+    weight_a: number
+    weight_b: number
 }
 
 type Tank = {
@@ -48,6 +54,9 @@ export default function AquariumEditor() {
     const [fishList, setFishList] = useState<Fish[]>([])
     const [tankSizesList, setTankSizesList] = useState<Tank[]>([]);
     const [selectedFishList, setSelectedFishList] = useState<SelectedFish[]>([]);
+    const [stockingLevel, setStockingLevel] = useState(0);
+    const [estimatedFishWeight, setEstimatedFishWeight] = useState(0);
+    const [estimatedWasteScore, setEstimatedWasteScore] = useState(0);
     
 
     useEffect(() => {
@@ -80,7 +89,10 @@ export default function AquariumEditor() {
             id: crypto.randomUUID(),
             name: fishName,
             quantity: quantity,
-            skill_level: matchedFish.skill_level
+            skill_level: matchedFish.skill_level,
+            adult_size_inches: matchedFish.adult_size_inches,
+            weight_a: matchedFish.weight_a,
+            weight_b: matchedFish.weight_b,
         }]);
         }
         if (alreadyAdded) {
@@ -93,15 +105,44 @@ export default function AquariumEditor() {
         }
         setFishName('');
         setQuantity(1);
+        calculateTotalWasteScore();
     }
 
     function removeFish(id: string){
         setSelectedFishList((prev) => prev.filter((fish) => fish.id != id))
     }
 
+    function calculateFishWeight(a: number, b: number, length: number){
+        return a * length ** b
+    }
+
+    const neonWeight = calculateFishWeight(0.01122, 3.08, 3.8)
+
+    function estimateWasteScore(fishWeight: number){ 
+        return (fishWeight / neonWeight) ** 0.6
+    }
+
+    function calculateTotalWasteScore() {
+    let totalWasteScore = 0
+    for (const fish of selectedFishList) {
+        const fishWeight = calculateFishWeight(fish.weight_a, fish.weight_b, fish.adult_size_inches * 2.54)
+        const wasteScore = estimateWasteScore(fishWeight)
+        totalWasteScore += wasteScore * fish.quantity
+    }
+    return totalWasteScore
+    }
+
+    const pointsPerGallon = 13.288279671646954 / 0.9 / 20
+    const totalWaste = calculateTotalWasteScore()
+    const selectedTank = tankSizesList.find((tank) => tank.label === tankSize)
+    const capacity = selectedTank ? selectedTank.gallons * pointsPerGallon : 0
+    const stockingPercentage = capacity > 0 ? totalWaste / capacity * 100 : 0
+
   return (
     
     <div className="editor-page">
+        <p className='test'>{calculateTotalWasteScore()}</p>
+        <p className='test'>{calculateFishWeight(0.02692, 3.03, 15.24)}</p>
 
         {/* User aquarium preview section */}
         <div className="editor-column">
@@ -203,9 +244,9 @@ export default function AquariumEditor() {
 
                 <div className="stocking-section">
                     <div className="stocking-header">
-                        <h3 className='stocking-section-title'>Stocking Level: </h3> {/* {stockingLevel} */}
+                        <h3 className='stocking-section-title'>Stocking Level:</h3> 
                         <div className='stocking-value-container'>
-                            <span className="stocking-value shimmer-wave shimmer-wave-text shimmer-moderate">67%</span>
+                            <span className="stocking-value shimmer-wave shimmer-wave-text shimmer-moderate">{Math.round(stockingPercentage)}%</span>
                         </div>
                     </div>
                     {/* here is where stocking level errors are going to pop-up */}

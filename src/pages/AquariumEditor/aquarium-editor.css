@@ -231,6 +231,14 @@
   margin: 1.5rem auto 0;
 }
 
+.test{
+  background-color: #1e1c3b;
+  font-size: large;
+  margin-top: 25rem;
+  display: flex;
+  justify-content: center;
+}
+
 .fish-item{
   display: flex;
   justify-content: space-between;

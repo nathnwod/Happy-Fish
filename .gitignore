@@ -28,3 +28,4 @@ backend/.venv
 *.db
 .env
 __pycache__/
+math.txt
