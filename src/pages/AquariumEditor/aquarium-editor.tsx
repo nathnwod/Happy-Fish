@@ -1,5 +1,7 @@
 import './aquarium-editor.css';
 import React, { useState, useEffect } from 'react';
+import { test, expect } from 'vitest'
+import { calculateFishWeight, estimateWasteScore } from './stocking'
 
 const tankSizes = [
   { id: "10g", label: "10 Gallon", gallons: 10 },
@@ -112,16 +114,9 @@ export default function AquariumEditor() {
         setSelectedFishList((prev) => prev.filter((fish) => fish.id != id))
     }
 
-    function calculateFishWeight(a: number, b: number, length: number){
-        return a * length ** b
-    }
 
-    const neonWeight = calculateFishWeight(0.01122, 3.08, 3.8)
-
-    function estimateWasteScore(fishWeight: number){ 
-        return (fishWeight / neonWeight) ** 0.6
-    }
-
+    // Adds up the waste score of every fish in the tank, times how many of each.
+    // Result is roughly "how many neons' worth of waste" the tank makes.
     function calculateTotalWasteScore() {
     let totalWasteScore = 0
     for (const fish of selectedFishList) {
@@ -132,7 +127,10 @@ export default function AquariumEditor() {
     return totalWasteScore
     }
 
+    // How much waste one gallon can handle before the tank counts as 100% full.
+    // Calibrated so 10 neons + 6 salt and pepper corys in a 20 gallon reads 90%.
     const pointsPerGallon = 13.288279671646954 / 0.9 / 20
+
     const totalWaste = calculateTotalWasteScore()
     const selectedTank = tankSizesList.find((tank) => tank.label === tankSize)
     const capacity = selectedTank ? selectedTank.gallons * pointsPerGallon : 0
