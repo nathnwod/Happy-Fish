@@ -1,19 +1,7 @@
 import './aquarium-editor.css';
 import React, { useState, useEffect } from 'react';
-import { test, expect } from 'vitest'
 import { calculateFishWeight, estimateWasteScore } from './stocking'
-
-const tankSizes = [
-  { id: "10g", label: "10 Gallon", gallons: 10 },
-  { id: "20g", label: "20 Gallon", gallons: 20 },
-  { id: "55g", label: "55 Gallon", gallons: 55 },
-];
-
-const fishData = [
-    { id: "betta", name: "Betta" },
-    { id: "guppy", name: "Guppy" },
-    { id: "corydoras", name: "Corydoras Catfish" },
-];
+import { getStockingWarnings } from './stocking-warnings'
 
 const vegetationOptions = [
     {id: "none", label: "No Plants"},
@@ -71,7 +59,6 @@ export default function AquariumEditor() {
     }, [])
 
     
-
     function addOne(){
         setQuantity((prev) => prev + 1)
     }
@@ -81,6 +68,8 @@ export default function AquariumEditor() {
             setQuantity((prev) => prev - 1)
         }
     }
+
+
 
     function addFish(){
         const alreadyAdded = selectedFishList.some((fish) => fish.name === fishName)
@@ -115,6 +104,7 @@ export default function AquariumEditor() {
     }
 
 
+
     // Adds up the waste score of every fish in the tank, times how many of each.
     // Result is roughly "how many neons' worth of waste" the tank makes.
     function calculateTotalWasteScore() {
@@ -133,12 +123,25 @@ export default function AquariumEditor() {
 
     const totalWaste = calculateTotalWasteScore()
     const selectedTank = tankSizesList.find((tank) => tank.label === tankSize)
-    const capacity = selectedTank ? selectedTank.gallons * pointsPerGallon : 0
+
+    let capacity = selectedTank ? selectedTank.gallons * pointsPerGallon : 0
+    if(vegetationLevel === "none"){
+        capacity *= 1;
+    }else if(vegetationLevel === 'light'){
+        capacity *= 1.1;
+    }else if(vegetationLevel === 'moderate'){
+        capacity *= 1.2;
+    }else if(vegetationLevel === 'heavy'){
+        capacity *= 1.3;
+    }
     const stockingPercentage = capacity > 0 ? totalWaste / capacity * 100 : 0
+    const warnings = getStockingWarnings(stockingPercentage, selectedFishList, Boolean(selectedTank))
 
   return (
     
     <div className="editor-page">
+
+        {/* testing */}
         <p className='test'>{calculateTotalWasteScore()}</p>
         <p className='test'>{calculateFishWeight(0.02692, 3.03, 15.24)}</p>
 
@@ -249,7 +252,18 @@ export default function AquariumEditor() {
                     </div>
                     {/* here is where stocking level errors are going to pop-up */}
                     <div className='stocking-level-message-container'>
-                        <h4 className='stocking-level-message'>Warning: stocking level too high!</h4>
+                        <div className='warnings'>
+                            {warnings.map((warning) => (
+                                <div className='warning-row' key={warning.text}>
+                                    {warning.isWarning && (
+                                        <svg className='warning-icon' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" height="24px" width="24px" fill="#e3e3e3"><path d="M1,21L12,2L23,21H1Zm3.45-2h15.1L12,6L4.45,19Zm8.26-1.29Q13,17.43 13,17t-0.29-0.71T12,16t-0.71,0.29T11,17t0.29,0.71T12,18t0.71-0.29ZM11,15h2V10H11v5Zm1-2.5Z"/></svg>
+                                    )}
+                                    <h4 className={warning.isWarning ? 'stocking-level-message' : 'stocking-level-message good-message'}>
+                                        {warning.text}
+                                    </h4>
+                                </div>
+                            ))}
+                        </div>
                     </div>
                 </div>
 
