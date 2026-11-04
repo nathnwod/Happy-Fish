@@ -1,6 +1,6 @@
 import './aquarium-editor.css';
 import React, { useState, useEffect } from 'react';
-import { calculateFishWeight, estimateWasteScore } from './stocking'
+import { calculateFishWeight, estimateWasteScore, calculateTotalWasteScore, pointsPerGallon } from './stocking'
 import { getStockingWarnings } from './stocking-warnings'
 
 const vegetationOptions = [
@@ -18,6 +18,16 @@ type Fish = {
     adult_size_inches: number
     weight_a: number
     weight_b: number
+    min_tank_gallons: number
+    min_group_size: number
+    max_group_size: number
+    avoid_pair: boolean
+    temperament: string
+    care_note: string
+    min_temp: number
+    max_temp: number
+    min_ph: number
+    max_ph: number
 }
 
 type SelectedFish = {
@@ -28,6 +38,16 @@ type SelectedFish = {
     adult_size_inches: number
     weight_a: number
     weight_b: number
+    min_tank_gallons: number
+    min_group_size: number
+    max_group_size: number
+    avoid_pair: boolean
+    temperament: string
+    care_note: string
+    min_temp: number
+    max_temp: number
+    min_ph: number
+    max_ph: number
 }
 
 type Tank = {
@@ -84,6 +104,16 @@ export default function AquariumEditor() {
             adult_size_inches: matchedFish.adult_size_inches,
             weight_a: matchedFish.weight_a,
             weight_b: matchedFish.weight_b,
+            min_tank_gallons: matchedFish.min_tank_gallons,
+            min_group_size: matchedFish.min_group_size,
+            max_group_size: matchedFish.max_group_size,
+            avoid_pair: matchedFish.avoid_pair,
+            temperament: matchedFish.temperament,
+            care_note: matchedFish.care_note,
+            min_temp: matchedFish.min_temp,
+            max_temp: matchedFish.max_temp,
+            min_ph: matchedFish.min_ph,
+            max_ph: matchedFish.max_ph
         }]);
         }
         if (alreadyAdded) {
@@ -96,32 +126,13 @@ export default function AquariumEditor() {
         }
         setFishName('');
         setQuantity(1);
-        calculateTotalWasteScore();
     }
 
     function removeFish(id: string){
         setSelectedFishList((prev) => prev.filter((fish) => fish.id != id))
     }
 
-
-
-    // Adds up the waste score of every fish in the tank, times how many of each.
-    // Result is roughly "how many neons' worth of waste" the tank makes.
-    function calculateTotalWasteScore() {
-    let totalWasteScore = 0
-    for (const fish of selectedFishList) {
-        const fishWeight = calculateFishWeight(fish.weight_a, fish.weight_b, fish.adult_size_inches * 2.54)
-        const wasteScore = estimateWasteScore(fishWeight)
-        totalWasteScore += wasteScore * fish.quantity
-    }
-    return totalWasteScore
-    }
-
-    // How much waste one gallon can handle before the tank counts as 100% full.
-    // Calibrated so 10 neons + 6 salt and pepper corys in a 20 gallon reads 90%.
-    const pointsPerGallon = 13.288279671646954 / 0.9 / 20
-
-    const totalWaste = calculateTotalWasteScore()
+    const totalWaste = calculateTotalWasteScore(selectedFishList)
     const selectedTank = tankSizesList.find((tank) => tank.label === tankSize)
 
     let capacity = selectedTank ? selectedTank.gallons * pointsPerGallon : 0
@@ -135,14 +146,14 @@ export default function AquariumEditor() {
         capacity *= 1.3;
     }
     const stockingPercentage = capacity > 0 ? totalWaste / capacity * 100 : 0
-    const warnings = getStockingWarnings(stockingPercentage, selectedFishList, Boolean(selectedTank))
+    const warnings = getStockingWarnings(stockingPercentage, selectedFishList, Boolean(selectedTank), selectedTank ? selectedTank.gallons : 0)
 
   return (
     
     <div className="editor-page">
 
         {/* testing */}
-        <p className='test'>{calculateTotalWasteScore()}</p>
+        <p className='test'>{calculateTotalWasteScore(selectedFishList)}</p>
         <p className='test'>{calculateFishWeight(0.02692, 3.03, 15.24)}</p>
 
         {/* User aquarium preview section */}
@@ -255,8 +266,10 @@ export default function AquariumEditor() {
                         <div className='warnings'>
                             {warnings.map((warning) => (
                                 <div className='warning-row' key={warning.text}>
-                                    {warning.isWarning && (
+                                    {warning.isWarning ? (
                                         <svg className='warning-icon' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" height="24px" width="24px" fill="#e3e3e3"><path d="M1,21L12,2L23,21H1Zm3.45-2h15.1L12,6L4.45,19Zm8.26-1.29Q13,17.43 13,17t-0.29-0.71T12,16t-0.71,0.29T11,17t0.29,0.71T12,18t0.71-0.29ZM11,15h2V10H11v5Zm1-2.5Z"/></svg>
+                                    ) : (
+                                        <svg className='non-warning-icon' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" height="24px" width="24px" fill="#e3e3e3"><path d="M10,18q-0.82,0-1.41-0.59T8,16V14.75q-1.42-0.98-2.21-2.5T5,9Q5,6.07 7.04,4.04T12,2t4.96,2.04T19,9q0,1.72-0.79,3.24T16,14.75V16q0,0.82-0.59,1.41T14,18H10Zm0-2h4V13.7l0.85-0.6q1.02-0.7 1.59-1.79T17,9q0-2.07-1.46-3.54T12,4Q9.93,4 8.46,5.46Q7,6.93 7,9q0,1.22 0.56,2.31T9.15,13.1L10,13.7V16Zm0,6q-0.42,0-0.71-0.29Q9,21.43 9,21V20h6v1q0,0.43-0.29,0.71T14,22H10ZM12,9Z"/></svg>
                                     )}
                                     <h4 className={warning.isWarning ? 'stocking-level-message' : 'stocking-level-message good-message'}>
                                         {warning.text}

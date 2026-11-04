@@ -31,7 +31,7 @@ export function calculateTotalWasteScore(
 
 // How much waste one gallon can handle before the tank counts as 100% full.
 // Calibrated so 10 neons + 6 salt and pepper corys in a 20 gallon reads 90%.
-export const pointsPerGallon = 13.288279671646954 / 0.9 / 20
+export const pointsPerGallon = 14.981207807954116 / 0.9 / 20
 
 export function calculateStockingPercentage(totalWaste: number, gallons: number) {
   return totalWaste / (gallons * pointsPerGallon) * 100
