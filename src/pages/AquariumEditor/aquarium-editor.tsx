@@ -77,6 +77,8 @@ export default function AquariumEditor() {
     const [fishList, setFishList] = useState<Fish[]>([])
     const [tankSizesList, setTankSizesList] = useState<Tank[]>([])
     const [selectedFishList, setSelectedFishList] = useState<SelectedFish[]>([])
+    const [tankSearch, setTankSearch] = useState('')
+    const [fishSearch, setFishSearch] = useState('')
 
 
     // ============================================
@@ -248,11 +250,18 @@ export default function AquariumEditor() {
                     {/* Tank size */}
                     <div className="tank-size-section">
                         <h3 className="tank-size-section-title">Select Aquarium Size</h3>
-                        <input
+                      <input
                             id="tank-size-input"
                             list="tank-size-list"
-                            value={tankSize}
-                            onChange={(e) => setTankSize(e.target.value)}
+                            value={tankSearch}
+                            onChange={(e) => {
+                                setTankSearch(e.target.value)
+                                if (tankSizesList.some((tank) => tank.label === e.target.value)) {
+                                    setTankSize(e.target.value)
+                                }
+                            }}
+                            onMouseDown={() => setTankSearch('')}
+                            onBlur={() => setTankSearch(tankSize)}
                             placeholder="Search Sizes"
                         />
                         <datalist id="tank-size-list">
@@ -285,8 +294,15 @@ export default function AquariumEditor() {
                             <input
                                 id="fish-input"
                                 list="fish-list"
-                                value={fishName}
-                                onChange={(e) => setFishName(e.target.value)}
+                                value={fishSearch}
+                                onChange={(e) => {
+                                    setFishSearch(e.target.value)
+                                    if (fishList.some((fish) => `${fish.name} (${fish.scientific_name})` === e.target.value)) {
+                                        setFishName(e.target.value)
+                                    }
+                                }}
+                                onMouseDown={() => setFishSearch('')}
+                                onBlur={() => setFishSearch(fishName)}
                                 placeholder="Search Fish"
                             />
                             <datalist id="fish-list">

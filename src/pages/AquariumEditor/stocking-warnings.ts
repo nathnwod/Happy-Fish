@@ -37,10 +37,12 @@ export function getStockingWarnings(
 
     const percent = Math.round(stockingPercentage)
 
-    if (percent >= 500) {
+    if (percent >= 275) {
     warnings.push({ text: 'This tank is dangerously stocked! Fish health at risk.', isWarning: true })
     } else if (percent > 150) {
-    warnings.push({ text: 'Heavily overstocked. This tank is likely too full.', isWarning: true })
+    warnings.push({ text: 'Heavily overstocked. Needs very frequent water changes, fewer fish, or a bigger tank.', isWarning: true })
+    } else if (percent > 125) {
+    warnings.push({ text: 'Overstocked. Needs extra water changes, fewer fish, or a bigger tank.', isWarning: true })
     } else if (percent > 100) {
     warnings.push({ text: 'Lightly overstocked. Consider fewer fish or a bigger tank.', isWarning: true })
     } else if (percent === 100) {
@@ -185,6 +187,6 @@ export function suggestWaterChangeSchedule(stockingPercentage: number, tankGallo
     } else if (stockingPercentage < 125) {
         return '50% every week'
     } else {
-        return '50%, 2-3 times a week'
+        return 'At least 50%, 2-3 times a week'
     }
 }
