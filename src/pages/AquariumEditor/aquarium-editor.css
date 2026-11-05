@@ -1,5 +1,25 @@
 /* ============================================
-   PAGE LAYOUT
+   TABLE OF CONTENTS
+   ============================================
+   1. PAGE LAYOUT
+   2. TOP BAR (cancel / tank name / save)
+   3. TANK PREVIEW
+   4. BOTTOM PANELS (left and right columns)
+   5. SHARED CARD STYLE (the grey boxes + their titles)
+   6. LEFT PANEL: YOUR TANK
+        6a. Text inputs (tank size, fish search, quantity)
+        6b. Vegetation
+        6c. Add fish (quantity row, add button)
+        6d. Your fish: fish cards
+   7. RIGHT PANEL: RESULTS
+        7a. Stocking + compatibility (shared header/value styles)
+        7b. Stocking warnings and tips
+        7c. Tank summary rows (temp, pH, water change)
+============================================ */
+
+
+/* ============================================
+   1. PAGE LAYOUT
    ============================================ */
 
 /* The 900px column everything sits inside */
@@ -16,12 +36,12 @@
 
 
 /* ============================================
-   TOP: Cancel / Save buttons
+   2. TOP BAR (cancel / tank name / save)
    ============================================ */
 
 .editor-actions {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);   
+  grid-template-columns: repeat(3, 1fr);
   margin-top: 150px;
   width: 100%;
 }
@@ -35,12 +55,24 @@
   gap: 0.5rem;
 }
 
-.cancel-btn    { justify-self: start; }    
-.tank-name-btn { justify-self: center; }   
-.save-btn      { justify-self: end; }     
+.cancel-btn    { justify-self: start; }
+.tank-name-btn { justify-self: center; }
+.save-btn      { justify-self: end; }
+
+.tank-name-btn {
+  justify-content: center;
+  padding: 0 1.5rem;
+  background-color: #1e1c3b;
+  border-radius: 8px;
+}
+
+.tank-name-btn:hover {
+  cursor: pointer;
+}
+
 
 /* ============================================
-   TANK PREVIEW (teal box + name pill)
+   3. TANK PREVIEW
    ============================================ */
 
 .tank-preview {
@@ -59,28 +91,9 @@
   inset 0 -1px 0 rgba(147, 138, 226, 0.15);    /* faint purple lip along the bottom edge */
 }
 
-.tank-name-btn {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 0 1.5rem;
-  background-color: #1e1c3b;
-  border-radius: 8px;
-}
-
-.tank-name-btn:hover {
-  cursor: pointer;
-}
-
-.tank-name {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
 
 /* ============================================
-   BOTTOM PANELS (inputs on the left, results on the right)
+   4. BOTTOM PANELS (your tank on the left, results on the right)
    ============================================ */
 
 .editor-panels {
@@ -89,7 +102,7 @@
   gap: 2.5rem;
   width: 100%;
   padding: 1rem 0;
-  /* outline: 2px solid red; */
+  /* outline: 2px solid red; */   /* debug: uncomment to see the panel edges */
 }
 
 .inputs-panel,
@@ -98,78 +111,84 @@
   padding: 1rem 0;
 }
 
-.inputs-panel input {
-  width: 100%;
-  box-sizing: border-box;
-}
 
+/* ============================================
+   5. SHARED CARD STYLE (the grey boxes + their titles)
+   ============================================ */
+
+/* Every grey box on the page */
 .tank-size-section,
-/* .fish-species-section, */
-/* .fish-quantity-section, */
 .add-fish-main-section,
 .vegetation-section,
 .stocking-section,
 .compatibility-section,
-.current-fish-selection-section
-{
+.current-fish-selection-section {
   background-color: #2e2c3d;
   padding: 1rem;
   border-radius: 8px;
-  margin: 0 0 1rem 0; 
+  margin: 0 0 1rem 0;
 
   box-shadow:
-  0 4px 6px rgba(0, 0, 0, 0.25),        
-  0 10px 24px rgba(0, 0, 0, 0.35),    
-  0 0 0 1px rgba(147, 138, 226, 0.15);  
+  0 4px 6px rgba(0, 0, 0, 0.25),
+  0 10px 24px rgba(0, 0, 0, 0.35),
+  0 0 0 1px rgba(147, 138, 226, 0.15);
 }
 
-.add-fish-main-section{
-  display: flex;
-  flex-direction: column;
-  gap: 2.5rem;
-}
-
-.add-fish-btn{
-  margin: 0 auto 0;
-}
-
-.tank-size-section input,
-.fish-species-section input,
-.fish-quantity-section input
-{
-  border-radius: 8px;
-  min-height: 25px;
-  border: 3px solid #736bbec9;
-}
-
+/* The heading at the top of each grey box */
 .tank-size-section-title,
 .fish-species-section-title,
 .fish-quantity-section-title,
 .vegetation-section-title,
 .stocking-section-title,
 .compatibility-section-title,
-.current-fish-selection-section-title
-{
+.current-fish-selection-section-title {
   margin: 0;
   margin-bottom: .5rem;
 }
 
-.quantity-row{
-  display: flex;
-  gap: .5rem;
-}
-
-.quantity-add-icon,
-.quantity-subtract-icon
-{
-  cursor: pointer;
-  user-select: none;
-  -webkit-user-select: none;   /* Safari */
+.tank-size-section-title, .vegetation-section-title {
+  margin-bottom: 1.5rem;
 }
 
 
+/* ============================================
+   6. LEFT PANEL: YOUR TANK
+   ============================================ */
 
-.vegetation-level-options{
+/* ---------- 6a. Text inputs (tank size, fish search, quantity) ---------- */
+
+/* Full width, centered text (including the placeholder) */
+#tank-size-input,
+#fish-input,
+#quantity {
+  width: 100%;
+  box-sizing: border-box;
+  text-align: center;
+}
+
+.tank-size-section input,
+.fish-species-section input,
+.fish-quantity-section input {
+  border-radius: 8px;
+  min-height: 25px;
+  border: 3px solid #736bbec9;
+}
+
+.fish-quantity-section, .fish-species-section{
+  background-color: #222235;
+  border-radius: 8px;
+  padding: 1rem;
+  box-shadow:
+  0 2px 6px rgba(0, 0, 0, 0.35),
+  0 0 0 1px rgba(147, 138, 226, 0.15);   /* faint purple edge */
+}
+
+
+
+
+/* ---------- 6b. Vegetation ---------- */
+
+.vegetation-level-options {
   display: flex;
   gap: .5rem;
 }
@@ -179,13 +198,270 @@
   background-color: #3f376d;
 }
 
+
+/* ---------- 6c. Add fish (quantity row, add button) ---------- */
+
+.add-fish-main-section {
+  display: flex;
+  flex-direction: column;
+  gap: 2.5rem;
+}
+
+.quantity-row {
+  display: flex;
+  gap: .5rem;
+}
+
+/* The - and + icons (used here AND on each fish card) */
+.quantity-add-icon,
+.quantity-subtract-icon {
+  cursor: pointer;
+  user-select: none;
+  -webkit-user-select: none;   /* Safari */
+}
+
+.add-fish-btn {
+  margin: 0 auto 0;
+}
+
+
+/* ---------- 6d. Your fish: fish cards ---------- */
+
+/* The list of fish cards: scrolls instead of growing forever */
+.fish-list {
+  max-height: 20vh;
+  overflow-y: auto;
+  padding-right: .75rem;   /* keeps the scrollbar off the cards */
+  scrollbar-color: #433b5f transparent;
+  scrollbar-width: thin;
+}
+
+/* "Your Fish:" on the left, fish count on the right */
+.fish-list-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: .5rem;
+}
+
+.fish-list-header .current-fish-selection-section-title {
+  margin-bottom: 0;
+}
+
+.fish-count {
+  font-weight: 700;
+  padding: .25rem .5rem;
+  border-radius: 8px;
+  background-color: #1c1922;
+}
+
+.fish-list-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: .25rem;
+  padding: 1.5rem 1rem;
+  margin-top: 2rem;
+  background-color: #222235;
+  border: 2px dashed rgba(147, 138, 226, 0.3);  
+  border-radius: 8px;
+  text-align: center;
+}
+
+.fish-list-empty-text {
+  margin: 0;
+}
+
+.fish-list-empty-hint {
+  margin: 0;
+  font-size: small;
+  opacity: .7;
+}
+
+/* One row in the list */
+.fish-item {
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+}
+
+/* Wrapper around the card (its margin is the gap between fish cards) */
+.fish-info-stats-wrapper {
+  flex: 1;
+  display: flex;
+  margin: .5rem 0;
+}
+
+/* The card itself */
+.fish-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  background-color: #222235;
+  border-radius: 8px;
+  padding: 0.75rem;
+
+  box-shadow:
+  0 2px 6px rgba(0, 0, 0, 0.35),
+  0 0 0 1px rgba(147, 138, 226, 0.15);
+}
+
+/* Card top: name group on the left, trash can on the right */
+.fish-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+}
+
+.fish-header h4 {
+  margin: 0;
+}
+
+/* Quantity pill, fish name and skill badge stacked */
+.fish-name-group {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 1rem;
+}
+
+/* Quantity pill: - [number] + */
+.fish-quantity-modifier {
+  display: inline-flex;
+  align-items: center;
+  gap: .25rem;
+  padding: .25rem .5rem;
+  border-radius: 8px;
+  background-color: #1c1922;
+}
+
+.fish-quantity-modifier svg {
+  display: block;
+}
+
+/* The typeable number inside the quantity pill */
+.fish-quantity-input {
+  width: 3ch;
+  background-color: #32313a;
+  border-radius: 8px;
+  padding: .25rem .5rem;
+  border: none;
+  color: inherit;
+  font: inherit;
+  text-align: center;
+  font-weight: bold;
+
+  box-shadow:
+  inset 0 4px 10px rgba(0, 0, 0, 0.5),
+  inset 0 -1px 0 rgba(147, 138, 226, 0.15);
+}
+
+.fish-quantity-input:focus {
+  outline: none;   /* no border when clicked */
+}
+
+.fish-quantity-input::-webkit-inner-spin-button,
+.fish-quantity-input::-webkit-outer-spin-button {
+  -webkit-appearance: none;     /* hides the up/down arrows in Chrome */
+}
+
+/* Skill level badge */
+.skill-level {
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+  flex-shrink: 0;
+}
+
+.skill-level h4 {
+  margin: 0;
+  padding: .25rem .5rem;
+  border-radius: 8px;
+}
+
+.skill-level svg {
+  cursor: pointer;
+}
+
+.skill-beginner h4     { background-color: #1f6f5c; }
+.skill-intermediate h4 { background-color: #9a6b12; }
+.skill-advanced h4     { background-color: #8a2f5a; }
+
+/* Trash can button */
+.remove-fish-icon-container {
+  display: flex;
+  padding: .5rem;
+  margin-right: .5rem;
+  border-radius: 8px;
+  background-color: #1c1922;
+  cursor: pointer;
+
+  border: 1px solid transparent;
+
+  box-shadow:
+  0 4px 6px rgba(0, 0, 0, 0.25),
+  0 10px 24px rgba(0, 0, 0, 0.35),
+  0 0 0 1px rgba(147, 138, 226, 0.15);
+}
+
+.remove-fish-icon-container:hover {
+  border-color: #938ae2;
+}
+
+.remove-fish-icon {
+  flex-shrink: 0;
+}
+
+/* Card bottom: the box holding the little stat pills */
+.fish-stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .25rem 1rem;
+  font-size: small;
+  background-color: #4d4869;
+  border-radius: 8px;
+  padding: .5rem;
+
+  box-shadow:
+  inset 0 4px 10px rgba(0, 0, 0, 0.5),
+  inset 0 -1px 0 rgba(147, 138, 226, 0.15);
+}
+
+/* One stat pill: icon, label, value */
+.fish-stat {
+  display: inline-flex;
+  align-items: center;
+  gap: .5rem;
+  background-color: #191920;
+  border-radius: 8px;
+  padding: .25rem .5rem;
+}
+
+.fish-stat-label {
+  opacity: .7;
+}
+
+.fish-stat-value {
+  font-weight: 700;
+}
+
+
+/* ============================================
+   7. RIGHT PANEL: RESULTS
+   ============================================ */
+
+/* ---------- 7a. Stocking + compatibility (shared header/value styles) ---------- */
+
 .stocking-header,
 .compatibility-header {
   display: flex;
   gap: 1rem;
   align-items: center;
-  
-  margin-bottom: .5rem; 
+
+  margin-bottom: .5rem;
 }
 
 .stocking-header .stocking-section-title,
@@ -194,7 +470,7 @@
 }
 
 .stocking-value,
-.compatibility-value{
+.compatibility-value {
   font-weight: 800;
   font-size: large;
 }
@@ -210,31 +486,45 @@
   inset 0 -1px 0 rgba(147, 138, 226, 0.15);
 }
 
-.warning-icon, .non-warning-icon{
+
+/* ---------- 7b. Stocking warnings and tips ---------- */
+
+.stocking-level-message-container {
+  background-color: #2a2733;
+  border-radius: 8px;
+  padding: 1rem;
+
+  box-shadow:
+  inset 0 4px 10px rgba(26, 26, 26, 0.5),
+  inset 0 -1px 0 rgba(147, 138, 226, 0.15);
+}
+
+/* The list of warnings: scrolls instead of growing forever */
+.warnings {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  max-height: 20vh;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  padding-right: .75rem;
+  scrollbar-color: #433b5f transparent;
+}
+
+.warning-row {
+  display: flex;
+  align-items: center;
+}
+
+.warning-icon,
+.non-warning-icon {
   flex-shrink: 0;
   width: 24px;
   height: 24px;
   margin-right: 1rem;
 }
 
-.stocking-level-message-container{
-  background-color: #2a2733;
-  border-radius: 8px;
-  padding: 1rem;
-}
-
-.warnings {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
-
-.warning-row{
-  display: flex;
-  align-items: center;
-}
-
-
+/* Warning (pink) */
 .stocking-level-message {
   margin: 0;
   padding: .75rem;
@@ -244,6 +534,7 @@
   font-size: small;
 }
 
+/* Tip / good message (gold). Comes after .stocking-level-message so it overrides it */
 .good-message {
   margin: 0;
   padding: .75rem;
@@ -254,86 +545,42 @@
 }
 
 
+/* ---------- 7c. Tank summary rows (temp, pH, water change) ---------- */
 
-
-.stocking-advice-btn {
-  display: block;
-  margin: 1.5rem auto 0;
-}
-
-.test{
-  background-color: #1e1c3b;
-  font-size: large;
-  margin-top: 25rem;
+.your-fish-results {
   display: flex;
-  justify-content: center;
-}
-
-.fish-item{
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+  flex-direction: column;
   gap: .5rem;
+  margin-top: 1rem;
 }
 
-.remove-fish-icon-container{
-  display: flex;
-  padding: .5rem;
-  margin-right: .5rem;
-  border-radius: 8px;
+.temp-range-container,
+.ph-range-container,
+.water-change-suggestion-container {
   background-color: #1c1922;
-  cursor: pointer;
-
-  border: 1px solid transparent;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  padding: .5rem 1rem;
 
   box-shadow:
-  0 4px 6px rgba(0, 0, 0, 0.25),        
-  0 10px 24px rgba(0, 0, 0, 0.35),       
-  0 0 0 1px rgba(147, 138, 226, 0.15);  
+  0 2px 6px rgba(0, 0, 0, 0.35),
+  0 0 0 1px rgba(147, 138, 226, 0.15);
 }
 
-.remove-fish-icon-container:hover{
-  border-color: #938ae2;  
-}
-
-.remove-fish-icon {
-  flex-shrink: 0;   
-
-  
-}
-
-
-
-.skill-level h4 {
+.temp-range-result,
+.ph-range-result,
+.water-change-suggestion-result {
   margin: 0;
-  padding: .5rem;
-  /* background-color: #1f831f; */
-  border-radius: 8px;
-  /* font-size: 0.9rem; */
 }
 
-.skill-level {
-  display: flex;
-  align-items: center;
-  gap: .5rem;
-  
+/* The numbers inside the summary rows */
+.temp-range,
+.ph-range,
+.water-change {
+  color: #8490f5;
 }
 
-.skill-level svg{
-  cursor: pointer;
-}
-
-.skill-beginner h4{ background-color: #1f6f5c; }
-.skill-intermediate h4{ background-color: #9a6b12; }
-.skill-advanced h4{ background-color: #8a2f5a; }
-
-
-/* ============================================
-   INPUT BOXES (centered text, including the placeholder)
-   ============================================ */
-
-#tank-size-input,
-#fish-input,
-#quantity {
-  text-align: center;
+.incompatible {
+  color: #e06da3;
 }

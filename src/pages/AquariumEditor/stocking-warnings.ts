@@ -50,7 +50,7 @@ export function getStockingWarnings(
     }
 
     if (totalFishInches / 1.2 > tankGallons && percent < 100) {
-        warnings.push({ text: "That's a lot of fish for this tank. Make sure there's enough swimming space!", isWarning: true })
+        warnings.push({ text: "You're under the waste limit, but that's a lot of fish for this tank. Make sure there's enough swimming space!", isWarning: true })
     }
 
     for (const fish of selectedFishList){
@@ -92,7 +92,6 @@ export function getStockingWarnings(
     let lowestMaxTemp = 1000
     let warmestFish = ''
     let coolestFish = ''
-    let narrowestTempRange = 1000
     for (const fish of selectedFishList) {
         if (fish.min_temp > highestMinTemp) {
             highestMinTemp = fish.min_temp
@@ -102,14 +101,10 @@ export function getStockingWarnings(
             lowestMaxTemp = fish.max_temp
             coolestFish = fish.name
         }
-        const tempRange = fish.max_temp - fish.min_temp
-        if (tempRange < narrowestTempRange) {
-            narrowestTempRange = tempRange
-        }
     }
 
-    if (lowestMaxTemp - highestMinTemp < Math.min(4, narrowestTempRange)) {
-        warnings.push({ text: `${warmestFish} and ${coolestFish} need different water temperatures.`, isWarning: true })
+    if (lowestMaxTemp < highestMinTemp) {
+        warnings.push({ text: `${warmestFish} and ${coolestFish} don't share a comfortable temperature range.`, isWarning: true })
     }
 
     // pH
@@ -117,7 +112,6 @@ export function getStockingWarnings(
     let lowestMaxPH = 1000
     let highestPhFish = ''
     let lowestPhFish = ''
-    let narrowestPhRange = 1000
     for (const fish of selectedFishList) {
         if (fish.min_ph > highestMinPH) {
             highestMinPH = fish.min_ph
@@ -127,14 +121,10 @@ export function getStockingWarnings(
             lowestMaxPH = fish.max_ph
             lowestPhFish = fish.name
         }
-        const phRange = fish.max_ph - fish.min_ph
-        if (phRange < narrowestPhRange) {
-            narrowestPhRange = phRange
-        }
     }
 
-    if (lowestMaxPH - highestMinPH < Math.min(0.5, narrowestPhRange)) {
-        warnings.push({ text: `${highestPhFish} and ${lowestPhFish} need different pH levels.`, isWarning: true })
+    if (lowestMaxPH < highestMinPH) {
+        warnings.push({ text: `${highestPhFish} and ${lowestPhFish} don't share a comfortable pH range.`, isWarning: true })
     }
     
     if (warnings.length === 0) {
@@ -147,6 +137,54 @@ export function getStockingWarnings(
         }
     }
 
-
     return warnings
+}
+
+export function getTempRange(selectedFishList: { min_temp: number, max_temp: number }[]) {
+    let highestMinTemp = 0
+    let lowestMaxTemp = 1000
+
+    for (const fish of selectedFishList) {
+        if (fish.min_temp > highestMinTemp) {
+            highestMinTemp = fish.min_temp
+        }
+        if (fish.max_temp < lowestMaxTemp) {
+            lowestMaxTemp = fish.max_temp
+        }
+    }
+
+    return { low: highestMinTemp, high: lowestMaxTemp }
+}
+
+export function getPhRange(selectedFishList: { min_ph: number, max_ph: number }[]) {
+    let highestMinPH = 0
+    let lowestMaxPH = 1000
+
+    for (const fish of selectedFishList) {
+        if (fish.min_ph > highestMinPH) {
+            highestMinPH = fish.min_ph
+        }
+        if (fish.max_ph < lowestMaxPH) {
+            lowestMaxPH = fish.max_ph
+        }
+    }
+    return { low: highestMinPH, high: lowestMaxPH }
+}
+
+export function suggestWaterChangeSchedule(stockingPercentage: number, tankGallons: number) {
+    if (tankGallons === 0) {
+        return 'Pick a tank size!'
+    } else if (stockingPercentage < 25) {
+        return '20% every 2 weeks'
+    } else if (stockingPercentage < 50) {
+        return '25% every week'
+    } else if (stockingPercentage < 75) {
+        return '30% every week'
+    } else if (stockingPercentage < 100) {
+        return '40% every week'
+    } else if (stockingPercentage < 125) {
+        return '50% every week'
+    } else {
+        return '50%, 2-3 times a week'
+    }
 }
