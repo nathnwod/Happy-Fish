@@ -122,7 +122,9 @@
 .vegetation-section,
 .stocking-section,
 .compatibility-section,
-.current-fish-selection-section {
+.current-fish-selection-section,
+.stocking-advice-section
+ {
   background-color: #2e2c3d;
   padding: 1rem;
   border-radius: 8px;
@@ -132,6 +134,12 @@
   0 4px 6px rgba(0, 0, 0, 0.25),
   0 10px 24px rgba(0, 0, 0, 0.35),
   0 0 0 1px rgba(147, 138, 226, 0.15);
+}
+
+.compatibility-section{
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 /* The heading at the top of each grey box */
@@ -464,6 +472,10 @@
   margin-bottom: .5rem;
 }
 
+.compatibility-section .compatibility-header {
+  margin-bottom: 0;
+}
+
 .stocking-header .stocking-section-title,
 .compatibility-header .compatibility-section-title {
   margin-bottom: 0;
@@ -486,6 +498,11 @@
   inset 0 -1px 0 rgba(147, 138, 226, 0.15);
 }
 
+
+.stocking-advice-section{
+  display: flex;
+  justify-content: center;
+}
 
 /* ---------- 7b. Stocking warnings and tips ---------- */
 

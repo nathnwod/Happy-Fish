@@ -14,6 +14,7 @@ export function getStockingWarnings(
         max_temp: number,
         min_ph: number,
         max_ph: number,
+        eats_fish_under_inches: number
     }[],
     tankSelected: boolean,
     tankGallons: number
@@ -53,6 +54,8 @@ export function getStockingWarnings(
 
     if (totalFishInches / 1.2 > tankGallons && percent < 100) {
         warnings.push({ text: "You're under the waste limit, but that's a lot of fish for this tank. Make sure there's enough swimming space!", isWarning: true })
+    } else if (totalFishInches / 1.2 > tankGallons && percent >= 100) {
+        warnings.push({ text: "That's a lot of fish for this tank. They'll be crowded with little room to swim.", isWarning: true })
     }
 
     for (const fish of selectedFishList){
@@ -64,17 +67,30 @@ export function getStockingWarnings(
         }
     }
 
-    let hasPeaceful = false
+        let smallestFish = 1000
     for (const fish of selectedFishList) {
-        if (fish.temperament === 'peaceful') {
-            hasPeaceful = true
+        if (fish.adult_size_inches < smallestFish) {
+            smallestFish = fish.adult_size_inches
         }
     }
 
+    let aggressiveEater = false
     for (const fish of selectedFishList) {
-        if (fish.temperament !== 'peaceful' && hasPeaceful) {
-            warnings.push({ text: `${fish.name} is ${fish.temperament} and may have conflicts with other fish in this tank.`, isWarning: true })
+        if (fish.eats_fish_under_inches && smallestFish < fish.eats_fish_under_inches) {
+            warnings.push({ text: `${fish.name} may eat smaller fish in this tank.`, isWarning: true })
+            if (fish.temperament !== 'peaceful') {
+                aggressiveEater = true
+            }
         }
+    }
+
+    const aggressiveFish = selectedFishList.filter((fish) => fish.temperament !== 'peaceful')
+    const hasPeaceful = selectedFishList.some((fish) => fish.temperament === 'peaceful')
+
+    if (aggressiveFish.length > 1) {
+        warnings.push({ text: 'Mixing aggressive or semi-aggressive fish can lead to fights.', isWarning: true })
+    } else if (aggressiveFish.length === 1 && hasPeaceful && !aggressiveEater) {
+        warnings.push({ text: `${aggressiveFish[0].name} is ${aggressiveFish[0].temperament} and may bother peaceful fish in this tank.`, isWarning: true })
     }
 
     for (const fish of selectedFishList) {
@@ -107,6 +123,7 @@ export function getStockingWarnings(
 
     if (lowestMaxTemp < highestMinTemp) {
         warnings.push({ text: `${warmestFish} and ${coolestFish} don't share a comfortable temperature range.`, isWarning: true })
+        
     }
 
     // pH
@@ -189,4 +206,80 @@ export function suggestWaterChangeSchedule(stockingPercentage: number, tankGallo
     } else {
         return 'At least 50%, 2-3 times a week'
     }
+}
+
+export function getCompatibilityScore(
+    selectedFishList: {
+        quantity: number,
+        name: string,
+        adult_size_inches: number,
+        min_tank_gallons: number,
+        min_group_size: number,
+        max_group_size: number,
+        avoid_pair: boolean,
+        temperament: string,
+        care_note: string,
+        min_temp: number,
+        max_temp: number,
+        min_ph: number,
+        max_ph: number,
+        eats_fish_under_inches: number,
+    }[],
+    tankGallons: number
+) {
+    let compatibilityScore = 100
+
+    const tempRange = getTempRange(selectedFishList)
+    if (tempRange.low > tempRange.high) {
+        compatibilityScore -= 40 
+    }
+
+    const phRange = getPhRange(selectedFishList)
+    if (phRange.low > phRange.high){
+        compatibilityScore -= 30 
+    }
+
+    const aggressiveFish = selectedFishList.filter((fish) => fish.temperament !== 'peaceful')
+    const hasPeaceful = selectedFishList.some((fish) => fish.temperament === 'peaceful')
+    if(aggressiveFish.length > 1){
+        compatibilityScore -= 30
+    } 
+    if (aggressiveFish.length === 1 && hasPeaceful){
+        compatibilityScore -= 15
+    } 
+    if (aggressiveFish.length > 1 && hasPeaceful){
+        compatibilityScore -= 15
+    }
+
+    let smallestFish = 1000
+    for (const fish of selectedFishList) {
+        if (fish.adult_size_inches < smallestFish) {
+            smallestFish = fish.adult_size_inches
+        }
+    }
+
+    for (const fish of selectedFishList) {
+        if (fish.quantity < fish.min_group_size){
+            compatibilityScore -= 10
+        }
+        if(fish.max_group_size && fish.quantity > fish.max_group_size){
+            compatibilityScore -= 40
+        }
+        if(fish.avoid_pair && fish.quantity === 2){
+            compatibilityScore -= 20
+        }
+        if(fish.min_tank_gallons > tankGallons){
+            compatibilityScore -= 10
+        }
+        if (fish.eats_fish_under_inches && smallestFish < fish.eats_fish_under_inches) {
+            compatibilityScore -= 20
+        }
+    }
+
+    if (compatibilityScore < 0){
+        compatibilityScore = 0
+    }
+
+
+    return compatibilityScore
 }

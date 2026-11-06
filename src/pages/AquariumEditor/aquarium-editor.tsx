@@ -1,7 +1,7 @@
 import './aquarium-editor.css'
 import React, { useState, useEffect } from 'react'
 import { calculateFishWeight, calculateTotalWasteScore, pointsPerGallon } from './stocking'
-import { getStockingWarnings, getTempRange, getPhRange, suggestWaterChangeSchedule } from './stocking-warnings'
+import { getStockingWarnings, getTempRange, getPhRange, suggestWaterChangeSchedule, getCompatibilityScore } from './stocking-warnings'
 
 
 // ============================================
@@ -34,6 +34,7 @@ type Fish = {
     max_temp: number
     min_ph: number
     max_ph: number
+    eats_fish_under_inches: number
 }
 
 // A fish the user added to their tank
@@ -55,6 +56,7 @@ type SelectedFish = {
     max_temp: number
     min_ph: number
     max_ph: number
+    eats_fish_under_inches: number
 }
 
 type Tank = {
@@ -132,6 +134,7 @@ export default function AquariumEditor() {
                 max_temp: matchedFish.max_temp,
                 min_ph: matchedFish.min_ph,
                 max_ph: matchedFish.max_ph,
+                eats_fish_under_inches: matchedFish.eats_fish_under_inches,
             }])
         }
 
@@ -146,6 +149,7 @@ export default function AquariumEditor() {
 
         setFishName('')
         setQuantity(1)
+        setFishSearch('')
     }
 
 
@@ -207,6 +211,7 @@ export default function AquariumEditor() {
 
     const stockingPercentage = capacity > 0 ? totalWaste / capacity * 100 : 0
     const warnings = getStockingWarnings(stockingPercentage, selectedFishList, Boolean(selectedTank), tankGallons)
+    const compatibilityScore = getCompatibilityScore(selectedFishList, tankGallons)    
     const tempRange = getTempRange(selectedFishList)
     const phRange = getPhRange(selectedFishList)
     const waterChange = suggestWaterChangeSchedule(stockingPercentage, tankGallons)
@@ -490,13 +495,19 @@ export default function AquariumEditor() {
                         <div className="compatibility-header">
                             <h3 className="compatibility-section-title">Compatibility Score: </h3>
                             <div className="compatibility-value-container">
-                                <span className="compatibility-value shimmer-wave shimmer-wave-text">85%</span>
+                            {selectedFishList.length > 0 && selectedTank
+                                ? <span className="compatibility-value shimmer-wave shimmer-wave-text">{compatibilityScore}%</span>
+                                : <span className="compatibility-value shimmer-wave shimmer-wave-text">---</span>
+                            }
                             </div>
                         </div>
+                    </div>
+                    
+                    <div className='stocking-advice-section'>
                         {/* TODO: Gemini will suggest changes to the user's stocking here */}
                         <button className="stocking-advice-btn">Get Stocking Advice</button>
                     </div>
-
+                    
                 </div>
 
             </div>
