@@ -75,12 +75,14 @@ export default function AquariumEditor() {
     const [tankSize, setTankSize] = useState('')
     const [fishName, setFishName] = useState('')
     const [quantity, setQuantity] = useState(1)
-    const [vegetationLevel, setVegetationLevel] = useState('')
+    const [vegetationLevel, setVegetationLevel] = useState('none')
     const [fishList, setFishList] = useState<Fish[]>([])
     const [tankSizesList, setTankSizesList] = useState<Tank[]>([])
     const [selectedFishList, setSelectedFishList] = useState<SelectedFish[]>([])
     const [tankSearch, setTankSearch] = useState('')
     const [fishSearch, setFishSearch] = useState('')
+    const [showScoreInfo, setShowScoreInfo] = useState(false)
+    const [showSkillLevelInfo, setShowSkillLevelInfo] = useState(false)
 
 
     // ============================================
@@ -165,7 +167,6 @@ export default function AquariumEditor() {
             return fish
         }))
     }
-
     function subtractOneFromFish(id: string) {
         setSelectedFishList((prev) => prev.map((fish) => {
             if (fish.id === id && fish.quantity > 1) {
@@ -229,9 +230,8 @@ export default function AquariumEditor() {
     return (
         <div className="editor-page">
 
-            {/* Debug output: remove before shipping */}
-            <p className="test">{totalWaste}</p>
-            <p className="test">{calculateFishWeight(0.02692, 3.03, 15.24)}</p>
+            {/* <p className="test">{totalWaste}</p>
+            <p className="test">{calculateFishWeight(0.02692, 3.03, 15.24)}</p> */}
 
             <div className="editor-column">
 
@@ -253,42 +253,46 @@ export default function AquariumEditor() {
                 <div className="inputs-panel">
 
                     {/* Tank size */}
-                    <div className="tank-size-section">
-                        <h3 className="tank-size-section-title">Select Aquarium Size</h3>
-                      <input
-                            id="tank-size-input"
-                            list="tank-size-list"
-                            value={tankSearch}
-                            onChange={(e) => {
-                                setTankSearch(e.target.value)
-                                if (tankSizesList.some((tank) => tank.label === e.target.value)) {
-                                    setTankSize(e.target.value)
-                                }
-                            }}
-                            onMouseDown={() => setTankSearch('')}
-                            onBlur={() => setTankSearch(tankSize)}
-                            placeholder="Search Sizes"
-                        />
-                        <datalist id="tank-size-list">
-                            {tankSizesList.map((tank) => (
-                                <option key={tank.id} value={tank.label} />
-                            ))}
-                        </datalist>
+                    <div className='tank-size-main-section'>
+                        <div className="tank-size-section">
+                            <h3 className="tank-size-section-title">Select Aquarium Size</h3>
+                          <input
+                                id="tank-size-input"
+                                list="tank-size-list"
+                                value={tankSearch}
+                                onChange={(e) => {
+                                    setTankSearch(e.target.value)
+                                    if (tankSizesList.some((tank) => tank.label === e.target.value)) {
+                                        setTankSize(e.target.value)
+                                    }
+                                }}
+                                onMouseDown={() => setTankSearch('')}
+                                onBlur={() => setTankSearch(tankSize)}
+                                placeholder="Search Sizes"
+                            />
+                            <datalist id="tank-size-list">
+                                {tankSizesList.map((tank) => (
+                                    <option key={tank.id} value={tank.label} />
+                                ))}
+                            </datalist>
+                        </div>
                     </div>
 
                     {/* Vegetation */}
-                    <div className="vegetation-section">
-                        <h3 className="vegetation-section-title">Select Vegetation Level</h3>
-                        <div className="vegetation-level-options">
-                            {vegetationOptions.map((option) => (
-                                <button
-                                    key={option.id}
-                                    className={vegetationLevel === option.id ? 'vegetation-btn selected' : 'vegetation-btn'}
-                                    onClick={() => setVegetationLevel(option.id)}
-                                >
-                                    <span className="shimmer-wave shimmer-wave-text">{option.label}</span>
-                                </button>
-                            ))}
+                    <div className='vegetation-section-main'>
+                        <div className="vegetation-section">
+                            <h3 className="vegetation-section-title">Select Vegetation Level</h3>
+                            <div className="vegetation-level-options">
+                                {vegetationOptions.map((option) => (
+                                    <button
+                                        key={option.id}
+                                        className={vegetationLevel === option.id ? 'vegetation-btn selected' : 'vegetation-btn'}
+                                        onClick={() => setVegetationLevel(option.id)}
+                                    >
+                                        <span className="shimmer-wave shimmer-wave-text">{option.label}</span>
+                                    </button>
+                                ))}
+                            </div>
                         </div>
                     </div>
 
@@ -375,9 +379,20 @@ export default function AquariumEditor() {
 
                                                     <div className={`skill-level skill-${fish.skill_level.toLowerCase()}`}>
                                                         <h4>{fish.skill_level}</h4>
-                                                        <svg xmlns="http://www.w3.org/2000/svg" height="18px" viewBox="0 -960 960 960" width="18px" fill="#e3e3e3"><path d="M440-280h80v-240h-80v240Zm68.5-331.5Q520-623 520-640t-11.5-28.5Q497-680 480-680t-28.5 11.5Q440-657 440-640t11.5 28.5Q463-600 480-600t28.5-11.5ZM480-80q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320Z"/></svg>
+                                                        <svg 
+                                                            className={showSkillLevelInfo ? 'skill-level-info-svg active' : 'skill-level-info-svg'}
+                                                            onClick={() => setShowSkillLevelInfo(!showSkillLevelInfo)}
+                                                            onMouseDown={(e) => e.preventDefault()}
+                                                            xmlns="http://www.w3.org/2000/svg" height="18px" viewBox="0 -960 960 960" width="18px" fill="#e3e3e3"
+                                                        >
+                                                            <path d="M440-280h80v-240h-80v240Zm68.5-331.5Q520-623 520-640t-11.5-28.5Q497-680 480-680t-28.5 11.5Q440-657 440-640t11.5 28.5Q463-600 480-600t28.5-11.5ZM480-80q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320Z"/></svg>
                                                     </div>
-
+                                                    
+                                                    {showSkillLevelInfo === true && (
+                                                        <p>hello </p>
+                                                    )}
+                                                    
+                                                    {/* {getSkillLevelInfo} */}
                                                 </div>
 
                                                 <div className="remove-fish-icon-container" onClick={() => removeFish(fish.id)}>
@@ -500,7 +515,23 @@ export default function AquariumEditor() {
                                 : <span className="compatibility-value shimmer-wave shimmer-wave-text">---</span>
                             }
                             </div>
+                            <svg
+                                className={showScoreInfo ? 'compatability-score-info-svg active' : 'compatability-score-info-svg'}
+                                onClick={() => setShowScoreInfo(!showScoreInfo)}
+                                onMouseDown={(e) => e.preventDefault()}
+                                xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"
+                            >
+                                <path d="M440-280h80v-240h-80v240Zm68.5-331.5Q520-623 520-640t-11.5-28.5Q497-680 480-680t-28.5 11.5Q440-657 440-640t11.5 28.5Q463-600 480-600t28.5-11.5ZM480-80q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320Z"/>
+                            </svg>
                         </div>
+
+                        <div className='score-info-container'>
+                            {showScoreInfo === true && (
+                                <p className="score-info-text">How well your fish will get along. Starts at 100%. Points come off when fish need different temps or pH, don't get along, need a bigger group or tank, or might eat each other.</p>
+                            )
+                            }
+                        </div>
+
                     </div>
                     
                     <div className='stocking-advice-section'>

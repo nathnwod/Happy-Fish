@@ -52,10 +52,10 @@ export function getStockingWarnings(
     warnings.push({ text: 'Nearly full. Add fish slowly, if at all.', isWarning: true })
     }
 
-    if (totalFishInches / 1.2 > tankGallons && percent < 100) {
+    if (totalFishInches / 1.4 > tankGallons && percent < 100) {
         warnings.push({ text: "You're under the waste limit, but that's a lot of fish for this tank. Make sure there's enough swimming space!", isWarning: true })
-    } else if (totalFishInches / 1.2 > tankGallons && percent >= 100) {
-        warnings.push({ text: "That's a lot of fish for this tank. They'll be crowded with little room to swim.", isWarning: true })
+    } else if (totalFishInches / 1.4 > tankGallons && percent >= 100) {
+        warnings.push({ text: "That's a lot of fish for this tank. They'll likely be crowded with little room to swim.", isWarning: true })
     }
 
     for (const fish of selectedFishList){
