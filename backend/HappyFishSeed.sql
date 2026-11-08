@@ -183,6 +183,7 @@ VALUES (
 );
 
 UPDATE species SET min_group_size = 6 WHERE scientific_name = 'Hoplisoma habrosum';
+UPDATE species SET waste_multiplier = 1.35 WHERE scientific_name = 'Xiphophorus maculatus';
 
 ALTER TABLE species ADD COLUMN waste_multiplier NUMERIC DEFAULT 1;
 UPDATE species SET waste_multiplier = 1.5 WHERE name = 'Common Goldfish';

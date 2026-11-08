@@ -12,8 +12,14 @@ export const neonWeight = calculateFishWeight(0.01122, 3.08, 3.8)
 // Waste score compared to a neon tetra (neon = 1).
 // The power gives big fish a discount, since they make less waste per gram.
 // Research suggests 0.75; tuned down to 0.525 so big fish match hobby stocking advice.
+// Tiny fish still need room and make some waste, so they count as at least 0.85 of a neon.
 export function estimateWasteScore(fishWeight: number) {
-  return (fishWeight / neonWeight) ** 0.525
+  const score = (fishWeight / neonWeight) ** 0.525
+
+  if (score < 0.85) {
+    return 0.85
+  }
+  return score
 }
 
 // Adds up the waste score of every fish in the tank, times how many of each.

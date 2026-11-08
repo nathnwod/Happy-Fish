@@ -16,9 +16,9 @@ const vegetationOptions = [
 ]
 
 const filtrationOptions = [
-    { id: 'unsure', label: 'Not Sure Yet' },
-    { id: 'sponge', label: 'Sponge Filter' },
-    { id: 'internal', label: 'Internal Filter' },
+    { id: 'unsure', label: 'Not Sure' },
+    { id: 'sponge', label: 'Sponge' },
+    { id: 'internal', label: 'Internal' },
     { id: 'hob', label: 'Hang-on-back' },
     { id: 'canister', label: 'Canister' },
 ]
