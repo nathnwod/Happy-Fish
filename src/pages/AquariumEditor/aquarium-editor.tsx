@@ -1,7 +1,7 @@
 import './aquarium-editor.css'
 import React, { useState, useEffect } from 'react'
 import { calculateFishWeight, calculateTotalWasteScore, pointsPerGallon } from './stocking'
-import { getStockingWarnings, getTempRange, getPhRange, suggestWaterChangeSchedule, getCompatibilityScore } from './stocking-warnings'
+import { getStockingWarnings, getTempRange, getPhRange, suggestWaterChangeSchedule, getCompatibilityScore, getSuggestedFlowRate } from './stocking-warnings'
 
 
 // ============================================
@@ -13,6 +13,14 @@ const vegetationOptions = [
     { id: 'light', label: 'Lightly Planted' },
     { id: 'moderate', label: 'Moderately Planted' },
     { id: 'heavy', label: 'Heavily Planted' },
+]
+
+const filtrationOptions = [
+    { id: 'unsure', label: 'Not Sure Yet' },
+    { id: 'sponge', label: 'Sponge Filter' },
+    { id: 'internal', label: 'Internal Filter' },
+    { id: 'hob', label: 'Hang-on-back' },
+    { id: 'canister', label: 'Canister' },
 ]
 
 // A species as it comes from the database
@@ -78,6 +86,7 @@ export default function AquariumEditor() {
     const [fishName, setFishName] = useState('')
     const [quantity, setQuantity] = useState(1)
     const [vegetationLevel, setVegetationLevel] = useState('none')
+    const [filterType, setFilterType] = useState('unsure')
     const [fishList, setFishList] = useState<Fish[]>([])
     const [tankSizesList, setTankSizesList] = useState<Tank[]>([])
     const [selectedFishList, setSelectedFishList] = useState<SelectedFish[]>([])
@@ -212,16 +221,26 @@ export default function AquariumEditor() {
         capacity *= 1.3
     }
 
+    // Small tanks are less stable, so they can't hold as much per gallon
+    if (tankGallons < 5) {
+        capacity *= 0.7
+    } else if (tankGallons < 11) {
+        capacity *= 0.8
+    }
+
     const stockingPercentage = capacity > 0 ? totalWaste / capacity * 100 : 0
     const warnings = getStockingWarnings(stockingPercentage, selectedFishList, Boolean(selectedTank), tankGallons)
     const compatibilityScore = getCompatibilityScore(selectedFishList, tankGallons)    
     const tempRange = getTempRange(selectedFishList)
     const phRange = getPhRange(selectedFishList)
     const waterChange = suggestWaterChangeSchedule(stockingPercentage, tankGallons)
+    const flowRate = getSuggestedFlowRate(stockingPercentage, selectedFishList, tankGallons)
 
     let totalFish = 0
+    let totalSpecies = 0
     for (const fish of selectedFishList) {
         totalFish += fish.quantity
+        totalSpecies += 1
     }
 
 
@@ -298,6 +317,24 @@ export default function AquariumEditor() {
                         </div>
                     </div>
 
+                    {/* Filtration */}
+                    <div className="filtration-section-main">
+                        <div className="filtration-section">
+                            <h3 className="filtration-section-title">Select Filter Type</h3>
+                            <div className="filtration-options">
+                                {filtrationOptions.map((option) => (
+                                    <button
+                                        key={option.id}
+                                        className={filterType === option.id ? 'filtration-btn selected' : 'filtration-btn'}
+                                        onClick={() => setFilterType(option.id)}
+                                    >
+                                        <span className="shimmer-wave shimmer-wave-text">{option.label}</span>
+                                    </button>
+                                ))}
+                            </div>
+                        </div>
+                    </div>
+
                     {/* Add fish */}
                     <div className="add-fish-main-section">
                         <div className="fish-species-section">
@@ -345,8 +382,16 @@ export default function AquariumEditor() {
                     <div className="current-fish-selection-section">
                         <div className="fish-list-header">
                             <h3 className="current-fish-selection-section-title">Your Fish:</h3>
-                            <span className="fish-count">{totalFish} fish</span>
+
+                            <div className='current-tank-info-cards'>
+                                <span className="fish-count">{totalFish} fish</span>
+                                <span className="species-count">{totalSpecies} species</span>
+                                <span className="tank-size-count">{tankSize} tank</span>
+                            </div>
+
                         </div>
+
+                        
 
                        {selectedFishList.length === 0 && (
                             <div className="fish-list-empty">
@@ -491,6 +536,14 @@ export default function AquariumEditor() {
                                 <div className="water-change-suggestion-container">
                                     {selectedFishList.length > 0 && (
                                         <h4 className="water-change-suggestion-result">Suggested water change schedule: <span className="water-change">{waterChange}</span></h4>
+                                    )}
+                                </div>
+                            )}
+
+                            {selectedFishList.length > 0 && selectedTank && (
+                                <div className="flow-rate-suggestion-container">
+                                    {selectedFishList.length > 0 && (
+                                        <h4 className="flow-rate-suggestion-result">Suggested flow rate: <span className="flow-rate">at least {flowRate} GPH</span></h4>
                                     )}
                                 </div>
                             )}

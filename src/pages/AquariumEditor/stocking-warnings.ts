@@ -14,7 +14,8 @@ export function getStockingWarnings(
         max_temp: number,
         min_ph: number,
         max_ph: number,
-        eats_fish_under_inches: number
+        eats_fish_under_inches: number,
+        waste_multiplier: number,
     }[],
     tankSelected: boolean,
     tankGallons: number
@@ -146,8 +147,10 @@ export function getStockingWarnings(
         warnings.push({ text: `${highestPhFish} and ${lowestPhFish} don't share a comfortable pH range.`, isWarning: true })
     }
     
-    if (warnings.length === 0) {
-        warnings.push({ text: 'Great tank! Consider adding more fish!', isWarning: false })
+    if (warnings.length === 0 && percent < 70) {
+    warnings.push({ text: 'Great tank! You have room for more fish.', isWarning: false })
+    } else if (warnings.length === 0) {
+        warnings.push({ text: "Great tank! You're getting close to full.", isWarning: false })
     }
 
     for (const fish of selectedFishList) {
@@ -208,6 +211,29 @@ export function suggestWaterChangeSchedule(stockingPercentage: number, tankGallo
     }
 }
 
+export function getSuggestedFlowRate(
+    stockingPercentage: number,
+    selectedFishList: {waste_multiplier: number}[], 
+    tankGallons: number)
+    {
+    const hasMessyFish = selectedFishList.some((fish) => fish.waste_multiplier >= 1.5)
+
+    // Start at 4x, add 1x for every 50% stocked, max 10x
+    let turnover = 4 + stockingPercentage / 50
+    if (turnover > 10) {
+        turnover = 10
+    }
+
+   // messyfish need strong filtration, so never go below 8x
+    if (hasMessyFish && turnover < 8) {
+        turnover = 8
+    }
+
+    return Math.round(tankGallons * turnover)
+}
+    
+
+
 export function getCompatibilityScore(
     selectedFishList: {
         quantity: number,
@@ -224,6 +250,7 @@ export function getCompatibilityScore(
         min_ph: number,
         max_ph: number,
         eats_fish_under_inches: number,
+        waste_multiplier: number,
     }[],
     tankGallons: number
 ) {
@@ -241,6 +268,7 @@ export function getCompatibilityScore(
 
     const aggressiveFish = selectedFishList.filter((fish) => fish.temperament !== 'peaceful')
     const hasPeaceful = selectedFishList.some((fish) => fish.temperament === 'peaceful')
+    
     if(aggressiveFish.length > 1){
         compatibilityScore -= 30
     } 

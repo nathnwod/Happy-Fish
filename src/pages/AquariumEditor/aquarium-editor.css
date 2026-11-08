@@ -108,6 +108,7 @@
 .inputs-panel,
 .results-panel {
   flex: 1;
+  min-width: 0;
   padding: 1rem 0;
 }
 
@@ -120,6 +121,7 @@
 .tank-size-main-section,
 .add-fish-main-section,
 .vegetation-section-main,
+.filtration-section-main,
 .stocking-section,
 .compatibility-section,
 .current-fish-selection-section,
@@ -148,6 +150,7 @@
 .fish-species-section-title,
 .fish-quantity-section-title,
 .vegetation-section-title,
+.filtration-section-title,
 .stocking-section-title,
 .compatibility-section-title,
 .current-fish-selection-section-title {
@@ -155,7 +158,7 @@
   margin-bottom: .5rem;
 }
 
-.vegetation-section-title {
+.vegetation-section-title, .filtration-section-title {
   margin-bottom: 1.5rem;
 }
 
@@ -193,7 +196,11 @@
   border: 3px solid #736bbec9;
 }
 
-.fish-quantity-section, .fish-species-section, .tank-size-section, .vegetation-section {
+.fish-quantity-section, 
+.fish-species-section, 
+.tank-size-section, 
+.vegetation-section, 
+.filtration-section {
   background-color: #222235;
   border-radius: 8px;
   padding: 1rem;
@@ -207,21 +214,35 @@
 
 /* ---------- 6b. Vegetation ---------- */
 
-.vegetation-level-options {
+.vegetation-level-options, .filtration-options {
   display: flex;
+  flex-wrap: wrap;
   gap: .5rem;
+  padding: 1rem 1rem;
+    background-color: #1f1e30;
+
+  border-radius: 8px;
+
+  box-shadow:
+  inset 0 2px 6px rgba(0, 0, 0, 0.3),
+  inset 0 -1px 0 rgba(147, 138, 226, 0.1);
 }
 
-.vegetation-btn.selected {
+.vegetation-btn.selected, .filtration-btn.selected{
   border: 2px solid #938ae2;
   background-color: #3f376d;
 }
 
-.vegetation-btn {
+.vegetation-btn, .filtration-btn {
   background-color: #2b2945;
   border-color: rgba(147, 138, 226, 0.4);
+  padding: .5em;
+  font-size: .9em;
 }
 
+.filtration-btn {
+  white-space: nowrap;
+}
 
 /* ---------- 6c. Add fish (quantity row, add button) ---------- */
 
@@ -272,11 +293,16 @@
   margin-bottom: 0;
 }
 
-.fish-count {
+.fish-count, .species-count, .tank-size-count {
+  display: flex;
   font-weight: 700;
   padding: .25rem .5rem;
   border-radius: 8px;
   background-color: #1c1922;
+
+  box-shadow:
+  0 2px 6px rgba(0, 0, 0, 0.35),
+  0 0 0 1px rgba(147, 138, 226, 0.15);
 }
 
 .fish-list-empty {
@@ -338,6 +364,14 @@
   justify-content: space-between;
   align-items: flex-start;
   gap: 1rem;
+}
+
+.current-tank-info-cards{
+  display: flex;
+  gap: .5rem;
+
+ 
+ 
 }
 
 .fish-header h4 {
@@ -637,7 +671,9 @@
 
 .temp-range-container,
 .ph-range-container,
-.water-change-suggestion-container {
+.water-change-suggestion-container,
+.flow-rate-suggestion-container
+{
   background-color: #1c1922;
   border-radius: 8px;
   display: flex;
@@ -651,14 +687,16 @@
 
 .temp-range-result,
 .ph-range-result,
-.water-change-suggestion-result {
+.water-change-suggestion-result,
+.flow-rate-suggestion-result {
   margin: 0;
 }
 
 /* The numbers inside the summary rows */
 .temp-range,
 .ph-range,
-.water-change {
+.water-change,
+.flow-rate {
   color: #8490f5;
 }
 
