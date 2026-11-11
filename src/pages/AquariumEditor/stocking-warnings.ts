@@ -53,10 +53,10 @@ export function getStockingWarnings(
     warnings.push({ text: 'Nearly full. Add fish slowly, if at all.', isWarning: false })
     }
 
-    if (totalFishInches / 1.3 > tankGallons && percent < 100) {
+    if (totalFishInches / 1.5 > tankGallons && percent < 100) {
         warnings.push({ text: "You're under the waste limit, but that's a lot of fish for this tank. Make sure there's enough swimming space!", isWarning: true })
-    } else if (totalFishInches / 1.4 > tankGallons && percent >= 100) {
-        warnings.push({ text: "That's a lot of fish for this tank. They'll likely be crowded with little room to swim.", isWarning: true })
+    } else if (totalFishInches / 1.5 > tankGallons && percent >= 100) {
+        warnings.push({ text: "Your tank is likely overcrowded. Make sure they have room to swim.", isWarning: true })
     }
 
     for (const fish of selectedFishList){
@@ -266,24 +266,26 @@ export function getCompatibilityScore(
         compatibilityScore -= 30 
     }
 
-    const aggressiveFish = selectedFishList.filter((fish) => fish.temperament !== 'peaceful')
-    const hasPeaceful = selectedFishList.some((fish) => fish.temperament === 'peaceful')
-    
-    if(aggressiveFish.length > 1){
-        compatibilityScore -= 30
-    } 
-    if (aggressiveFish.length === 1 && hasPeaceful){
-        compatibilityScore -= 15
-    } 
-    if (aggressiveFish.length > 1 && hasPeaceful){
-        compatibilityScore -= 15
-    }
-
     let smallestFish = 1000
     for (const fish of selectedFishList) {
         if (fish.adult_size_inches < smallestFish) {
             smallestFish = fish.adult_size_inches
         }
+    }
+
+    const aggressiveFish = selectedFishList.filter((fish) => fish.temperament !== 'peaceful')
+    const hasPeaceful = selectedFishList.some((fish) => fish.temperament === 'peaceful')
+    // If the aggressive fish also eats fish here, it already loses 20 below, so don't double count
+    const aggressiveEater = aggressiveFish.some((fish) => fish.eats_fish_under_inches > smallestFish)
+    
+    if(aggressiveFish.length > 1){
+        compatibilityScore -= 30
+    } 
+    if (aggressiveFish.length === 1 && hasPeaceful && !aggressiveEater){
+        compatibilityScore -= 15
+    } 
+    if (aggressiveFish.length > 1 && hasPeaceful){
+        compatibilityScore -= 15
     }
 
     for (const fish of selectedFishList) {
@@ -308,6 +310,35 @@ export function getCompatibilityScore(
         compatibilityScore = 0
     }
 
-
     return compatibilityScore
+}
+
+
+// Sponge filters are sold by tank size.
+// About one sponge per 40 gallons. Overstocked tanks get one extra sponge,
+// and heavily overstocked tanks also get bigger sponges.
+export function getSpongeSuggestion(stockingPercentage: number, tankGallons: number) {
+    // About one sponge per 40 gallons
+    let spongeCount = Math.ceil(tankGallons / 40)
+
+    // Each sponge covers its share of the tank
+    let eachRating = tankGallons / spongeCount
+
+    // Overstocked: add one extra sponge (max one extra)
+    if (stockingPercentage > 100) {
+        spongeCount += 1
+    }
+
+    // Heavily overstocked: also size the sponges up
+    if (stockingPercentage > 150) {
+        eachRating *= 2
+    }
+
+    // Round up to the nearest 5 gallons
+    eachRating = Math.ceil(eachRating / 5) * 5
+
+    if (spongeCount === 1) {
+        return `1 sponge rated for ${eachRating}+ gallons`
+    }
+    return `${spongeCount} sponges, each rated for ${eachRating}+ gallons`
 }

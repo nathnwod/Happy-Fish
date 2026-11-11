@@ -1,7 +1,7 @@
 import './aquarium-editor.css'
 import React, { useState, useEffect } from 'react'
 import { calculateFishWeight, calculateTotalWasteScore, pointsPerGallon } from './stocking'
-import { getStockingWarnings, getTempRange, getPhRange, suggestWaterChangeSchedule, getCompatibilityScore, getSuggestedFlowRate } from './stocking-warnings'
+import { getStockingWarnings, getTempRange, getPhRange, suggestWaterChangeSchedule, getCompatibilityScore, getSuggestedFlowRate, getSpongeSuggestion } from './stocking-warnings'
 
 
 // ============================================
@@ -13,6 +13,12 @@ const vegetationOptions = [
     { id: 'light', label: 'Lightly Planted' },
     { id: 'moderate', label: 'Moderately Planted' },
     { id: 'heavy', label: 'Heavily Planted' },
+]
+
+const lightingOptions = [
+    { id: 'low', label: 'Low' },
+    { id: 'medium', label: 'Medium' },
+    { id: 'high', label: 'High' },
 ]
 
 const filtrationOptions = [
@@ -86,14 +92,18 @@ export default function AquariumEditor() {
     const [fishName, setFishName] = useState('')
     const [quantity, setQuantity] = useState(1)
     const [vegetationLevel, setVegetationLevel] = useState('none')
+    const [lightLevel, setLightLevel]  = useState('low')
     const [filterType, setFilterType] = useState('unsure')
     const [fishList, setFishList] = useState<Fish[]>([])
     const [tankSizesList, setTankSizesList] = useState<Tank[]>([])
     const [selectedFishList, setSelectedFishList] = useState<SelectedFish[]>([])
     const [tankSearch, setTankSearch] = useState('')
     const [fishSearch, setFishSearch] = useState('')
+    const [showFlowRateInfo, setShowFlowRateInfo] = useState(false)
     const [showScoreInfo, setShowScoreInfo] = useState(false)
+    const [showFilterInfo, setShowFilterInfo] = useState(false)
 
+    
 
     // ============================================
     // LOAD DATA (species + tank sizes)
@@ -205,9 +215,11 @@ export default function AquariumEditor() {
     // STOCKING CALCULATIONS
     // ============================================
 
-    const totalWaste = calculateTotalWasteScore(selectedFishList)
+    
+    
     const selectedTank = tankSizesList.find((tank) => tank.label === tankSize)
     const tankGallons = selectedTank ? selectedTank.gallons : 0
+    const totalWaste = calculateTotalWasteScore(selectedFishList, tankGallons)
 
     // Plants absorb some waste, so they raise the tank's capacity
     let capacity = selectedTank ? selectedTank.gallons * pointsPerGallon : 0
@@ -299,8 +311,9 @@ export default function AquariumEditor() {
                         </div>
                     </div>
 
+                   
                     {/* Vegetation */}
-                    <div className='vegetation-section-main'>
+                    <div className='tank-setup-section'>
                         <div className="vegetation-section">
                             <h3 className="vegetation-section-title">Select Vegetation Level</h3>
                             <div className="vegetation-level-options">
@@ -314,13 +327,26 @@ export default function AquariumEditor() {
                                     </button>
                                 ))}
                             </div>
-                        </div>
-                    </div>
 
-                    {/* Filtration */}
-                    <div className="filtration-section-main">
+                                {/* Lighting */}
+                                <div className='lighting-options'><span className='lighting-options-title'>Lighting Level:</span>
+                                    {lightingOptions.map((option) => (
+                                        <label>
+                                            <input
+                                                type="radio"
+                                                name="light"
+                                                checked={lightLevel === option.id}
+                                                onChange={() => setLightLevel(option.id)}
+                                            />
+                                            {option.label}
+                                        </label>
+                                    ))}
+                                </div>
+                        </div>
+                        
+                        {/* Filtration */}
                         <div className="filtration-section">
-                            <h3 className="filtration-section-title">Select Filter Type</h3>
+                            <h3 className="filtration-section-title">Select Filtration Type</h3>
                             <div className="filtration-options">
                                 {filtrationOptions.map((option) => (
                                     <button
@@ -334,6 +360,7 @@ export default function AquariumEditor() {
                             </div>
                         </div>
                     </div>
+
 
                     {/* Add fish */}
                     <div className="add-fish-main-section">
@@ -386,7 +413,7 @@ export default function AquariumEditor() {
                             <div className='current-tank-info-cards'>
                                 <span className="fish-count">{totalFish} fish</span>
                                 <span className="species-count">{totalSpecies} species</span>
-                                <span className="tank-size-count">{tankSize} tank</span>
+                                <span className="tank-size-count">{tankGallons} gallon tank</span>
                             </div>
 
                         </div>
@@ -542,9 +569,30 @@ export default function AquariumEditor() {
 
                             {selectedFishList.length > 0 && selectedTank && (
                                 <div className="flow-rate-suggestion-container">
-                                    {selectedFishList.length > 0 && (
-                                        <h4 className="flow-rate-suggestion-result">Suggested flow rate: <span className="flow-rate">at least {flowRate} GPH</span></h4>
-                                    )}
+                                    <h4 className="flow-rate-suggestion-result">
+                                        <span>
+                                            {filterType === 'sponge'
+                                                ? <>Suggested filter: <span className="flow-rate">{getSpongeSuggestion(stockingPercentage, tankGallons)}</span></>
+                                                : <>Suggested flow rate: <span className="flow-rate">At least {flowRate} GPH</span></>
+                                            }
+                                        </span>
+                                        <svg
+                                            className={showFilterInfo ? 'suggested-flowrate-info-svg active' : 'suggested-flowrate-info-svg'}
+                                            onClick={() => setShowFilterInfo(!showFilterInfo)}
+                                            onMouseDown={(e) => e.preventDefault()}
+                                            xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="#e3e3e3"
+                                        >
+                                            <path d="M440-280h80v-240h-80v240Zm68.5-331.5Q520-623 520-640t-11.5-28.5Q497-680 480-680t-28.5 11.5Q440-657 440-640t11.5 28.5Q463-600 480-600t28.5-11.5ZM480-80q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320Z"/>
+                                        </svg>
+                                    </h4>
+
+                                    <div className='flowrate-info-container'>
+                                        {showFilterInfo && (
+                                            filterType === 'sponge'
+                                                ? <p className="flowrate-info-text">Sponge filters are sold by tank size. Big tanks do better with a few sponges instead of one. If your tank is overstocked, pick sponges labeled for a bigger tank than yours.</p>
+                                                : <p className="flowrate-info-text">How many gallons per hour your filter should handle. Make sure your filter is rated for at least {flowRate} GPH. Note: real flow rate is usually slightly lower than what is advertised.</p>
+                                        )}
+                                    </div>
                                 </div>
                             )}
                         </div>
