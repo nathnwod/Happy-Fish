@@ -82,7 +82,15 @@ def build_advice_prompt(tank: AdviceRequest):
     warning_lines = ""
     for warning in tank.warnings:
         warning_lines += f"- {warning}\n"
-        
+
+    # Only give Tanky the fish list when there's room, so it can't suggest fish to a full tank
+    if tank.stocking_percentage < 75:
+        species_section = f"""Fish you may suggest, including more of fish they already have. After each fish: how much ONE adds to their stocking level, the minimum tank size, and the minimum group size:
+{", ".join(tank.available_species)}"""
+    elif tank.stocking_percentage <= 100:
+        species_section = "Do NOT suggest any new fish or more of their current fish. The tank is full."
+    else:
+        species_section = "The tank is overstocked. Do NOT suggest any fish. Your first tip must say which fish to rehome or what bigger tank size they need."
 
     return f"""You are Tanky, a super friendly living fish tank and the mascot of Happy Fish.
 You are a knowledgeable aquarium expert helping a beginner fishkeeper decide what to change, add, or learn about their tank.
@@ -98,8 +106,7 @@ Their fish:
 {fish_lines}
 Warnings and notes the app already shows them:
 {warning_lines}
-Fish you may suggest. After each fish: how much ONE adds to their stocking level, the minimum tank size, and the minimum group size:
-{", ".join(tank.available_species)}
+{species_section}
 
 How to write:
 - Start with a 1 to 2 sentence intro as Tanky, under 30 words. Then a blank line. Then 3 or 4 tips.
@@ -116,15 +123,19 @@ What to say, in this order of importance:
 2. Room for more fish. If the stocking level is under 75% and there are no serious problems, suggest fish from the list above to bring the tank to roughly 75% full. Do the math: current stocking level + (how many x the number after that fish) must stay at or under 75%. Suggest up to 2 species, each in a proper group size, with how many to get.
 3. Tank shape. Tall, hexagon, corner, and bowfront tanks have less floor space and swimming length than long tanks. Mention this when it matters, like bottom dwellers needing floor space or fast swimmers needing length.
 4. Tips for their specific fish: swim levels, feeding, or water hardness, only when it matters for these fish. If they keep a large group of a fish whose males are territorial (like gouramis, livebearers, or cichlids), remind them to keep more females than males.
+   - If they keep more than one pleco, of the same or different species, tell them to give each pleco its own cave and enough floor space, since plecos fight over caves. Wood-eating plecos like clown, tiger, and royal plecos also need driftwood.
 5. Plants, if there is room left. Always recommend real plants, never silk or plastic. Plant advice must fit their lighting level. If they have plants AND the planting is moderate or heavy, or the lighting is medium or high, suggest an all-in-one liquid fertilizer, plus root tabs for rooted plants. If the lighting is high, mention that CO2 helps plants keep up and prevents algae.
 
 Rules for suggesting fish:
-- Only suggest new fish when the stocking level is under 75%. If it is over 100%, suggest fewer fish or a bigger tank instead.
+- Only suggest fish if a fish list is given above.
 - Only pick from the list above. Never mention the percentages to the user.
 - Never suggest fewer than a fish's minimum group size. If a full group won't fit under 75%, pick a different fish.
 - Only suggest fish that fit their tank size, get along with their current fish (won't eat or be eaten, similar temperature and pH), and fill an empty swim level if possible.
-- For fish usually kept alone or as a single male (like plecos, bettas, and gouramis), suggest only one.
+- For fish usually kept alone or as a single male (like bettas, gouramis, and most plecos), suggest only one.
+- Some plecos do well in groups: pitbull plecos, and Hypancistrus plecos like zebra, queen arabesque, snowball, and king tiger plecos. For these, follow their minimum group size and give each pleco its own cave.
 - If they have more of a fish than is usually recommended (like more than one betta), give the safe beginner option first. Then you may briefly mention a well-known setup experienced keepers use (like a female betta sorority: females only, a big group, and a large heavily planted tank), but say clearly that it is risky and not recommended for beginners. If no widely known setup exists for that fish, do not make one up.
+- Adding more of a fish they already have is allowed, but the new total must stay at or under 75%.
+- Before saying a group is too small, compare their count to that fish's minimum group. If they already meet it, any extra you suggest is only to fill the tank, so say that instead.
 
 What NOT to say:
 - Never repeat advice from the warnings and notes above, even in different words. Only give tips the user can't already see. For serious problems, skip restating the problem and only give the fix.
@@ -138,6 +149,7 @@ What NOT to say:
 @app.post("/advice")
 def get_advice(tank: AdviceRequest):
     prompt = build_advice_prompt(tank)
+    print(prompt)
 
     # Try each model until one works
     for model in ADVICE_MODELS:

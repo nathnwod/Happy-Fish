@@ -1,8 +1,34 @@
+// Fish need some room between their temperature limits, since tank temperature moves a degree or two.
+// Sharing less than 2°F is a warning. Sharing 2-3°F gets a reminder to keep the temperature steady.
+export const minSafeTempOverlap = 2
+export const tightTempOverlap = 3
+// pH drifts a few tenths during the day, so fish need to share at least 0.5
+export const minSafePhOverlap = 0.5
+
+// How much of a pH range two fish share. Rounded, since 7.2 - 6.8 isn't exactly 0.4 in JavaScript.
+function phOverlap(highestMin: number, lowestMax: number) {
+    return Math.round((lowestMax - highestMin) * 10) / 10
+}
+
+// How many of this fish's species are in the tank. Color forms like "Betta splendens (Halfmoon)" count together.
+function countSameSpecies(selectedFishList: { quantity: number; scientific_name: string }[], scientificName: string) {
+    const species = scientificName.split(' (')[0]
+    let count = 0
+    for (const other of selectedFishList) {
+        if (other.scientific_name.split(' (')[0] === species) {
+            count += other.quantity
+        }
+    }
+    return count
+}
+
 export function getStockingWarnings(
     stockingPercentage: number,
+
     selectedFishList: {
         quantity: number,
         name: string,
+        scientific_name: string,  
         adult_size_inches: number,
         min_tank_gallons: number,
         min_group_size: number,
@@ -53,11 +79,18 @@ export function getStockingWarnings(
     warnings.push({ text: 'Nearly full. Add fish slowly, if at all.', isWarning: false })
     }
 
-    if (totalFishInches / 1.5 > tankGallons && percent < 100) {
-        warnings.push({ text: "You're under the waste limit, but that's a lot of fish for this tank. Make sure there's enough swimming space!", isWarning: true })
-    } else if (totalFishInches / 1.5 > tankGallons && percent >= 100) {
-        warnings.push({ text: "Your tank is likely overcrowded. Make sure they have room to swim.", isWarning: true })
+    // Big tanks can handle a few more inches of fish per gallon
+    let inchesPerGallon = 1.5
+    if (tankGallons > 75) {
+        inchesPerGallon = 1.8
     }
+
+    if (totalFishInches / inchesPerGallon > tankGallons && percent < 100) {
+        warnings.push({ text: "You're under the waste limit, but that's a lot of fish for this tank. Your tank is likely overcrowded!", isWarning: true })
+    } else if (totalFishInches / inchesPerGallon > tankGallons && percent >= 100) {
+        warnings.push({ text: "Your tank is likely overcrowded. Make sure there's enough swimming space.", isWarning: true })
+    }
+
 
     for (const fish of selectedFishList){
         if(fish.min_tank_gallons > tankGallons){
@@ -94,10 +127,32 @@ export function getStockingWarnings(
         warnings.push({ text: `${aggressiveFish[0].name} is ${aggressiveFish[0].temperament} and may bother peaceful fish in this tank.`, isWarning: true })
     }
 
+    // Species that already got a max group warning, so color forms don't repeat it
+    const warnedSpecies: string[] = []
     for (const fish of selectedFishList) {
-        if (fish.max_group_size && fish.quantity > fish.max_group_size) {
-            warnings.push({ text: `Keep no more than ${fish.max_group_size} ${fish.name} in one tank.`, isWarning: true })
+        const species = fish.scientific_name.split(' (')[0]
+        if (fish.max_group_size && countSameSpecies(selectedFishList, fish.scientific_name) > fish.max_group_size && !warnedSpecies.includes(species)) {
+            warnedSpecies.push(species)
+            if (fish.max_group_size === 1) {
+                warnings.push({ text: `Keep only 1 ${fish.name} per tank. They get territorial with their own kind, so a second one usually means fighting. Color forms count as the same fish.`, isWarning: true })
+            } else {
+                warnings.push({ text: `Keep no more than ${fish.max_group_size} ${fish.name} in one tank. Males fight over territory, so more than ${fish.max_group_size} usually means constant fighting. Color forms count as the same fish.`, isWarning: true })
+            }
         }
+    }
+
+    // Gouramis, bettas and paradise fish all claim the surface, so different species fight each other
+    const labyrinthGenera = ['Trichogaster', 'Trichopodus', 'Trichopsis', 'Sphaerichthys', 'Helostoma', 'Osphronemus', 'Betta', 'Macropodus', 'Anabas']
+    // Color forms like "Trichogaster chuna (Sunset)" count as the same species
+    const labyrinthSpecies: string[] = []
+    for (const fish of selectedFishList) {
+        const species = fish.scientific_name.split(' (')[0]
+        if (labyrinthGenera.includes(species.split(' ')[0]) && !labyrinthSpecies.includes(species)) {
+            labyrinthSpecies.push(species)
+        }
+    }
+    if (labyrinthSpecies.length >= 2) {
+        warnings.push({ text: "You have more than one kind of gourami, betta or paradise fish. They all claim the water's surface, so different kinds often chase and fight. It can work in a big, heavily planted tank, but watch them closely.", isWarning: true })
     }
 
     for (const fish of selectedFishList) {
@@ -122,9 +177,18 @@ export function getStockingWarnings(
         }
     }
 
-    if (lowestMaxTemp < highestMinTemp) {
-        warnings.push({ text: `${warmestFish} and ${coolestFish} don't share a comfortable temperature range.`, isWarning: true })
-        
+    // Only compare when two different fish set the limits. One fish's own range is never a conflict.
+    const tempConflict = warmestFish !== coolestFish
+    const tempOverlap = lowestMaxTemp - highestMinTemp
+    let tightTempNote = ''
+
+    if (tempConflict && tempOverlap < 0) {
+        warnings.push({ text: `${warmestFish} need at least ${highestMinTemp}°F, but ${coolestFish} do best at ${lowestMaxTemp}°F or cooler. No temperature suits both.`, isWarning: true })
+    } else if (tempConflict && tempOverlap < minSafeTempOverlap) {
+        warnings.push({ text: `${warmestFish} need at least ${highestMinTemp}°F, but ${coolestFish} do best at ${lowestMaxTemp}°F or cooler. That leaves almost no temperature that suits both.`, isWarning: true })
+    } else if (tempConflict && tempOverlap <= tightTempOverlap) {
+        // Not a problem, just a reminder. Added after the "Great tank" check so it doesn't hide it.
+        tightTempNote = `These fish only share a narrow temperature range, so keep the temperature steady between ${highestMinTemp}°F and ${lowestMaxTemp}°F.`
     }
 
     // pH
@@ -143,14 +207,19 @@ export function getStockingWarnings(
         }
     }
 
-    if (lowestMaxPH < highestMinPH) {
-        warnings.push({ text: `${highestPhFish} and ${lowestPhFish} don't share a comfortable pH range.`, isWarning: true })
+    // pH drifts a few tenths during the day, so a shared range under 0.5 can't really be held
+    if (highestPhFish !== lowestPhFish && phOverlap(highestMinPH, lowestMaxPH) < minSafePhOverlap) {
+        warnings.push({ text: `${highestPhFish} need a pH of at least ${highestMinPH.toFixed(1)}, but ${lowestPhFish} do best at ${lowestMaxPH.toFixed(1)} or lower. One usually needs harder water and the other softer water, so it's hard to keep both healthy.`, isWarning: true })
     }
-    
+
     if (warnings.length === 0 && percent < 70) {
     warnings.push({ text: 'Great tank! You have room for more fish.', isWarning: false })
     } else if (warnings.length === 0) {
         warnings.push({ text: "Great tank! You're getting close to full.", isWarning: false })
+    }
+
+    if (tightTempNote) {
+        warnings.push({ text: tightTempNote, isWarning: false })
     }
 
     for (const fish of selectedFishList) {
@@ -197,15 +266,19 @@ export function suggestWaterChangeSchedule(stockingPercentage: number, tankGallo
     if (tankGallons === 0) {
         return 'Pick a tank size!'
     } else if (stockingPercentage < 25) {
-        return '20% every 2 weeks'
+        return '20% or more every 2 weeks'
     } else if (stockingPercentage < 50) {
-        return '25% every week'
+        return '25% or more each week'
     } else if (stockingPercentage < 75) {
-        return '30% every week'
-    } else if (stockingPercentage < 100) {
-        return '40% every week'
-    } else if (stockingPercentage < 125) {
-        return '50% every week'
+        return '30% or more each week'
+    } else if (stockingPercentage < 90) {
+        return '40% or more each week'
+    } else if (stockingPercentage < 105) {
+        return '50% or more each week'
+    } else if (stockingPercentage < 120) {
+        return '60% or more each week'
+    } else if (stockingPercentage < 135) {
+        return '75% or more each week, split into 2 changes'
     } else {
         return 'At least 50%, 2-3 times a week'
     }
@@ -213,10 +286,11 @@ export function suggestWaterChangeSchedule(stockingPercentage: number, tankGallo
 
 export function getSuggestedFlowRate(
     stockingPercentage: number,
-    selectedFishList: {waste_multiplier: number}[], 
+    selectedFishList: {waste_multiplier: number, adult_size_inches: number}[], 
     tankGallons: number)
     {
-    const hasMessyFish = selectedFishList.some((fish) => fish.waste_multiplier >= 1.5)
+    // Messy = high waste AND at least 4 inches, so tiny fish like pygmy corys don't count
+    const hasMessyFish = selectedFishList.some((fish) => fish.waste_multiplier >= 1.45 && fish.adult_size_inches >= 4)
 
     // Start at 4x, add 1x for every 50% stocked, max 10x
     let turnover = 4 + stockingPercentage / 50
@@ -256,14 +330,15 @@ export function getCompatibilityScore(
 ) {
     let compatibilityScore = 100
 
+    // Same limits as the warnings. With one species the range is its own, so it never counts against it.
     const tempRange = getTempRange(selectedFishList)
-    if (tempRange.low > tempRange.high) {
-        compatibilityScore -= 40 
+    if (selectedFishList.length > 1 && tempRange.high - tempRange.low < minSafeTempOverlap) {
+        compatibilityScore -= 40
     }
 
     const phRange = getPhRange(selectedFishList)
-    if (phRange.low > phRange.high){
-        compatibilityScore -= 30 
+    if (selectedFishList.length > 1 && phOverlap(phRange.low, phRange.high) < minSafePhOverlap) {
+        compatibilityScore -= 30
     }
 
     let smallestFish = 1000

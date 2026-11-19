@@ -42,7 +42,7 @@
 .editor-actions {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  margin-top: 150px;
+  margin-top: 100px;
   width: 100%;
 }
 
@@ -197,8 +197,34 @@
   margin-bottom: .5rem;
 }
 
+.tank-size-section-title, 
+.vegetation-section-title,
+.filtration-section-title,
+.lighting-options-title,
+.fish-species-section-title,
+.fish-quantity-section-title,
+
+.temp-range-result,
+.ph-range-result,
+.water-change-suggestion-result,
+.flow-rate-suggestion-result
+{
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
 .vegetation-section-title, .filtration-section-title {
   margin-bottom: 1.5rem;
+}
+
+.your-fish-results svg {
+  flex-shrink: 0;
+}
+
+.suggested-flowrate-info-svg {
+  vertical-align: middle;
+  margin-left: .25rem;
 }
 
 
@@ -248,7 +274,48 @@
   0 0 0 1px rgba(147, 138, 226, 0.15);   /* faint purple edge */
 }
 
+/* Custom dropdown (replaces the browser's datalist) */
+.dropdown {
+  position: relative;
+}
 
+/* The list floats under the input and scrolls */
+.dropdown-list {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  z-index: 10;
+  max-height: 220px;
+  overflow-y: auto;
+  margin-top: .25rem;
+  background-color: #1c1922;
+  border-radius: 8px;
+  scrollbar-width: thin;
+  scrollbar-color: #6c679bee transparent;
+
+  box-shadow:
+  0 4px 12px rgba(0, 0, 0, 0.5),
+  0 0 0 1px rgba(147, 138, 226, 0.3);
+}
+
+.dropdown-item {
+  padding: .5rem 1rem;
+  font-size: .9em;
+  cursor: pointer;
+}
+
+.dropdown-item:hover {
+  background-color: #3f376d;
+}
+
+/* Scientific name under the common name */
+.dropdown-item-sub {
+  display: block;
+  font-size: .8em;
+  font-style: italic;
+  opacity: .6;
+}
 
 
 /* ---------- 6b. Vegetation ---------- */
@@ -306,7 +373,7 @@
 
 /* The list of fish cards: scrolls instead of growing forever */
 .fish-list {
-  max-height: 20vh;
+  max-height: 25vh;
   overflow-y: auto;
   padding-right: .75rem;   /* keeps the scrollbar off the cards */
   scrollbar-color: #6c679bee transparent;
@@ -546,13 +613,25 @@
 
 /* ---------- 7a. Stocking + compatibility (shared header/value styles) ---------- */
 
+/* Shimmer colors by level: sage (good) → plum (dangerous)
+   Mostly the level color, with a thin theme-lavender glint */
+.shimmer-wave.shimmer-good    { background-image: linear-gradient(90deg, #74b9a0 0%, #74b9a0 40%, #b8a9f2 50%, #74b9a0 60%, #74b9a0 100%); }
+.shimmer-wave.shimmer-ok      { background-image: linear-gradient(90deg, #e2a86e 0%, #e2a86e 40%, #b8a9f2 50%, #e2a86e 60%, #e2a86e 100%); }
+.shimmer-wave.shimmer-warn    { background-image: linear-gradient(90deg, #e3866c 0%, #e3866c 40%, #b8a9f2 50%, #e3866c 60%, #e3866c 100%); }
+.shimmer-wave.shimmer-bad     { background-image: linear-gradient(90deg, #d9617a 0%, #d9617a 40%, #b8a9f2 50%, #d9617a 60%, #d9617a 100%); }
+.shimmer-wave.shimmer-danger  { background-image: linear-gradient(90deg, #a24fc4 0%, #a24fc4 40%, #b8a9f2 50%, #a24fc4 60%, #a24fc4 100%); }
+
 .stocking-header,
 .compatibility-header {
   display: flex;
   gap: 1rem;
   align-items: center;
 
-  margin-bottom: .5rem;
+  margin-bottom: 1rem;
+}
+
+.stocking-header{
+  justify-content: center;
 }
 
 .compatibility-section .compatibility-header {
@@ -585,10 +664,6 @@
   inset 0 -1px 0 rgba(147, 138, 226, 0.15);
 }
 
-.compatibility-score-info-svg:hover{
-  cursor: pointer;
-}
-
 .compatability-score-info-svg, .suggested-flowrate-info-svg {
   cursor: pointer;
   user-select: none;
@@ -597,7 +672,7 @@
 }
 
 .compatability-score-info-svg.active, .suggested-flowrate-info-svg.active {
-  fill: #9a85f7;
+  fill: #a299c2b2;
 }
 
 .score-info-text, .flowrate-info-text {
@@ -615,9 +690,99 @@
   
 }
 
-.stocking-advice-section{
+.flowrate-info-container {
+  margin: .5rem .25rem;
+}
+
+.score-info-container {
+  align-self: stretch;          
+  margin: .5rem .25rem .25rem;  
+}
+
+.stocking-advice-section {
   display: flex;
-  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+/* No extra space when the info card is closed */
+.flowrate-info-container:empty,
+.score-info-container:empty {
+  margin: 0;
+}
+
+/* Fades in when advice appears */
+@keyframes advice-fade-in {
+  from { opacity: 0; transform: translateY(4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Gemini's advice + both info cards: the same note style */
+.advice-text,
+.score-info-text,
+.flowrate-info-text {
+  width: 100%;
+  box-sizing: border-box;
+  margin: .75rem 0 0;
+  padding: 1rem 1.25rem;
+  white-space: pre-line;   /* keeps each tip on its own line */
+  text-align: left;
+  font-size: .9rem;
+  line-height: 1.6;
+  background: linear-gradient(180deg, #2a2745, #222235);
+  border-left: 3px solid #938ae2;
+  border-radius: 8px;
+  animation: advice-fade-in .3s ease-out;
+
+  box-shadow:
+  0 2px 6px rgba(0, 0, 0, 0.35),
+  0 0 0 1px rgba(147, 138, 226, 0.2);
+}
+
+
+
+/* The small label at the top of each note */
+.advice-text::before,
+.score-info-text::before,
+.flowrate-info-text::before {
+  display: block;
+  margin-bottom: .5rem;
+  font-size: .75rem;
+  font-weight: 800;
+  letter-spacing: .05em;
+  text-transform: uppercase;
+  color: #b8a9f2;
+}
+
+.advice-text::before        { content: "Tanky says"; }
+.score-info-text::before    { content: "About this score"; }
+.flowrate-info-text::before { content: "About your filter"; }
+
+
+
+.advice-error {
+  margin: 0;
+  font-size: small;
+  color: #e06da3;
+}
+
+/* Holds the advice so the X can sit in its corner */
+.advice-box {
+  position: relative;
+  width: 100%;
+}
+
+.advice-close-icon {
+  position: absolute;
+  top: 1.25rem;
+  right: .75rem;
+  cursor: pointer;
+  opacity: .6;
+}
+
+.advice-close-icon:hover {
+  opacity: 1;
 }
 
 /* ---------- 7b. Stocking warnings and tips ---------- */
@@ -699,42 +864,45 @@
   flex-direction: column;
   gap: .5rem;
   margin-top: 1rem;
-  
 }
 
+/* The dark row boxes */
 .temp-range-container,
 .ph-range-container,
 .water-change-suggestion-container,
-.flow-rate-suggestion-container
-{
+.flow-rate-suggestion-container {
+  display: flex;
+  flex-direction: column;
+  padding: .75rem 1rem;
   background-color: #1c1922;
   border-radius: 8px;
-  display: flex;
-  align-items: center;
-  padding: .5rem 1rem;
-  flex-direction: column;
 
   box-shadow:
   0 2px 6px rgba(0, 0, 0, 0.35),
   0 0 0 1px rgba(147, 138, 226, 0.15);
 }
 
-.flow-rate-suggestion-container{
-  align-items: center;
-  padding: 1rem;
-}
-
+/* Each row: icon pinned left, text beside it */
 .temp-range-result,
 .ph-range-result,
 .water-change-suggestion-result,
 .flow-rate-suggestion-result {
-  margin: 0;
-}
-
-.flow-rate-suggestion-result {
   display: flex;
   align-items: center;
-  gap: .5rem;
+  gap: 1rem;
+  margin: 0;
+  text-align: left;
+}
+
+/* Icons never get squished */
+.your-fish-results svg {
+  flex-shrink: 0;
+}
+
+/* Info icon sits at the end of the text */
+.suggested-flowrate-info-svg {
+  vertical-align: middle;
+  margin-left: .25rem;
 }
 
 /* The numbers inside the summary rows */
@@ -749,3 +917,11 @@
   color: #e06da3;
 }
 
+/* Space between the label and its value */
+.temp-range,
+.ph-range,
+.water-change,
+.flow-rate,
+.incompatible {
+  margin-left: .25rem;
+}

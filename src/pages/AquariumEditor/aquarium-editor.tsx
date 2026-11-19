@@ -1,7 +1,16 @@
 import './aquarium-editor.css'
 import React, { useState, useEffect } from 'react'
 import { calculateFishWeight, calculateTotalWasteScore, pointsPerGallon } from './stocking'
-import { getStockingWarnings, getTempRange, getPhRange, suggestWaterChangeSchedule, getCompatibilityScore, getSuggestedFlowRate, getSpongeSuggestion } from './stocking-warnings'
+import { 
+    getStockingWarnings, 
+    getTempRange, 
+    getPhRange, 
+    suggestWaterChangeSchedule, 
+    getCompatibilityScore, 
+    getSuggestedFlowRate, 
+    getSpongeSuggestion,
+
+} from './stocking-warnings'
 
 
 // ============================================
@@ -56,6 +65,7 @@ type Fish = {
 type SelectedFish = {
     id: string
     name: string
+    scientific_name: string
     quantity: number
     skill_level: string
     adult_size_inches: number
@@ -102,6 +112,11 @@ export default function AquariumEditor() {
     const [showFlowRateInfo, setShowFlowRateInfo] = useState(false)
     const [showScoreInfo, setShowScoreInfo] = useState(false)
     const [showFilterInfo, setShowFilterInfo] = useState(false)
+    const [advice, setAdvice] = useState('')
+    const [isLoadingAdvice, setIsLoadingAdvice] = useState(false)
+    const [adviceError, setAdviceError] = useState('')
+    const [showTankList, setShowTankList] = useState(false)
+    const [showFishList, setShowFishList] = useState(false)
 
     
 
@@ -141,6 +156,7 @@ export default function AquariumEditor() {
             setSelectedFishList((prev) => [...prev, {
                 id: crypto.randomUUID(),
                 name: fishName,
+                scientific_name: matchedFish.scientific_name,
                 quantity: quantity,
                 skill_level: matchedFish.skill_level,
                 adult_size_inches: matchedFish.adult_size_inches,
@@ -215,34 +231,89 @@ export default function AquariumEditor() {
     // STOCKING CALCULATIONS
     // ============================================
 
-    
-    
+
     const selectedTank = tankSizesList.find((tank) => tank.label === tankSize)
     const tankGallons = selectedTank ? selectedTank.gallons : 0
     const totalWaste = calculateTotalWasteScore(selectedFishList, tankGallons)
+    
 
     // Plants absorb some waste, so they raise the tank's capacity
     let capacity = selectedTank ? selectedTank.gallons * pointsPerGallon : 0
-    if (vegetationLevel === 'none') {
-        capacity *= 1
-    } else if (vegetationLevel === 'light') {
-        capacity *= 1.1
-    } else if (vegetationLevel === 'moderate') {
-        capacity *= 1.2
-    } else if (vegetationLevel === 'heavy') {
-        capacity *= 1.3
-    }
 
     // Small tanks are less stable, so they can't hold as much per gallon
     if (tankGallons < 5) {
         capacity *= 0.7
-    } else if (tankGallons < 11) {
-        capacity *= 0.8
     }
 
+    // Stocking before plants, used to decide how much plants help
+    const stockingBeforePlants = capacity > 0 ? totalWaste / capacity * 100 : 0
+    
+    // Plants absorb some waste, so they raise the tank's capacity.
+    // In very overstocked tanks they help less.
+    // How much plants raise the tank's capacity (medium light).
+    // A few plants barely change waste levels. A heavily planted tank
+    // helps noticeably, but still can't replace good filtration and water changes.
+    let plantBonus = 0
+    if (vegetationLevel === 'light') {
+        plantBonus = 0.03
+    } else if (vegetationLevel === 'moderate') {
+        plantBonus = 0.08
+    } else if (vegetationLevel === 'heavy') {
+        plantBonus = 0.15
+    }
+
+    // Plants grow faster with more light, so they take in more waste.
+    // High light is only a small boost, since plants also need CO2 and nutrients.
+    if (lightLevel === 'low') {
+        plantBonus *= 0.6
+    } else if (lightLevel === 'high') {
+        plantBonus *= 1.15
+    }
+
+    // In very overstocked tanks, plants can only absorb a small share of the waste
+    if (stockingBeforePlants > 150) {
+        plantBonus *= 0.5
+    }
+
+    capacity *= 1 + plantBonus
+
     const stockingPercentage = capacity > 0 ? totalWaste / capacity * 100 : 0
+    
     const warnings = getStockingWarnings(stockingPercentage, selectedFishList, Boolean(selectedTank), tankGallons)
-    const compatibilityScore = getCompatibilityScore(selectedFishList, tankGallons)    
+    const compatibilityScore = getCompatibilityScore(selectedFishList, tankGallons)  
+
+    // Shimmer color for the stocking level (matches the warning levels)
+    const roundedStocking = Math.round(stockingPercentage)
+    let stockingShimmer = 'shimmer-good'
+    if (roundedStocking >= 275) {
+        stockingShimmer = 'shimmer-danger'
+    } else if (roundedStocking > 150) {
+        stockingShimmer = 'shimmer-bad'
+    } else if (roundedStocking > 100) {
+        stockingShimmer = 'shimmer-warn'
+    } else if (roundedStocking >= 90) {
+        stockingShimmer = 'shimmer-ok'
+    }
+
+    // Shimmer color for the compatibility score (higher is better)
+    let scoreShimmer = 'shimmer-good'
+    if (compatibilityScore < 25) {
+        scoreShimmer = 'shimmer-danger'
+    } else if (compatibilityScore < 50) {
+        scoreShimmer = 'shimmer-bad'
+    } else if (compatibilityScore < 70) {
+        scoreShimmer = 'shimmer-warn'
+    } else if (compatibilityScore < 90) {
+        scoreShimmer = 'shimmer-ok'
+    }  
+
+    // Any pink warning makes the stocking shimmer red (unless it's already worse)
+    for (const warning of warnings){
+        if (warning.isWarning && stockingShimmer !== 'shimmer-danger') {
+            stockingShimmer = 'shimmer-warn'
+        }
+    }
+
     const tempRange = getTempRange(selectedFishList)
     const phRange = getPhRange(selectedFishList)
     const waterChange = suggestWaterChangeSchedule(stockingPercentage, tankGallons)
@@ -255,6 +326,51 @@ export default function AquariumEditor() {
         totalSpecies += 1
     }
 
+    // ============================================
+    // STOCKING ADVICE (Gemini)
+    // ============================================
+
+    async function getAdvice() {
+        setIsLoadingAdvice(true)
+        setAdviceError('')
+
+        try {
+            const res = await fetch('http://127.0.0.1:8000/advice', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    tank_label: tankSize,
+                    vegetation_level: vegetationLevel,
+                    light_level: lightLevel,
+                    filter_type: filterType,
+                    fish: selectedFishList.map((fish) => ({ name: fish.name, quantity: fish.quantity })),
+                    stocking_percentage: stockingPercentage,
+                    compatibility_score: compatibilityScore,
+                    warnings: warnings.map((warning) => warning.text),
+                    // Each fish Gemini can suggest, plus how much one of them would add to this tank's stocking %
+                    available_species: fishList.map((fish) => {
+                        const oneFishWaste = calculateTotalWasteScore([{ ...fish, quantity: 2 }], tankGallons) / 2
+                        const percentEach = capacity > 0 ? oneFishWaste / capacity * 100 : 0
+                        // Only show a group size for fish that have one
+                        const groupText = fish.min_group_size ? `, groups of ${fish.min_group_size}+` : ''
+                        return `${fish.name} (+${percentEach.toFixed(1)}% each, ${fish.min_tank_gallons}+ gal${groupText})`
+                    }),
+                }),
+            })
+
+            if (res.ok) {
+                const data = await res.json()
+                setAdvice(data.advice)
+            } else {
+                setAdviceError('Advice is busy right now. Please try again in a minute.')
+            }
+        } catch {
+            setAdviceError("Couldn't reach the server. Is the backend running?")
+        }
+
+        setIsLoadingAdvice(false)
+    }
+
 
     // ============================================
     // PAGE
@@ -262,8 +378,8 @@ export default function AquariumEditor() {
 
     return (
         <div className="editor-page">
- <p className="test">{calculateFishWeight(0.02692, 3.03, 15.24)}</p>
-            <p className="test">{totalWaste}</p>
+            {/* <p className="test">{calculateFishWeight(0.02692, 3.03, 15.24)}</p> */}
+            {/* <p className="test">{totalWaste}</p> */}
            
 
             <div className="editor-column">
@@ -288,26 +404,54 @@ export default function AquariumEditor() {
                     {/* Tank size */}
                     <div className='tank-size-main-section'>
                         <div className="tank-size-section">
-                            <h3 className="tank-size-section-title">Select Aquarium Size</h3>
-                          <input
-                                id="tank-size-input"
-                                list="tank-size-list"
-                                value={tankSearch}
-                                onChange={(e) => {
-                                    setTankSearch(e.target.value)
-                                    if (tankSizesList.some((tank) => tank.label === e.target.value)) {
-                                        setTankSize(e.target.value)
-                                    }
-                                }}
-                                onMouseDown={() => setTankSearch('')}
-                                onBlur={() => setTankSearch(tankSize)}
-                                placeholder="Search Sizes"
-                            />
-                            <datalist id="tank-size-list">
-                                {tankSizesList.map((tank) => (
-                                    <option key={tank.id} value={tank.label} />
-                                ))}
-                            </datalist>
+                            <h3 className="tank-size-section-title">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" height="24px" width="24px" fill="#a78bfa"><path d="M4,18q-0.82,0-1.41-0.59T2,16V8Q2,7.18 2.59,6.59T4,6H20q0.83,0 1.41,0.59Q22,7.18 22,8v8q0,0.82-0.59,1.41T20,18H4Zm0-2H20V8H17v4H15V8H13v4H11V8H9v4H7V8H4v8Zm3-4H9H7Zm4,0h2H11Zm4,0h2H15Zm-3,0Z"/></svg>
+                                Select Aquarium Size
+                            </h3>
+                            <div className="dropdown">
+                                <input
+                                    id="tank-size-input"
+                                    value={tankSearch}
+                                    onChange={(e) => {
+                                        setTankSearch(e.target.value)
+                                        setShowTankList(true)
+                                        if (tankSizesList.some((tank) => tank.label === e.target.value)) {
+                                            setTankSize(e.target.value)
+                                        }
+                                    }}
+                                    onMouseDown={() => {
+                                        setTankSearch('')
+                                        setShowTankList(true)
+                                    }}
+                                    onBlur={() => {
+                                        setTankSearch(tankSize)
+                                        setShowTankList(false)
+                                    }}
+                                    placeholder="Search Sizes"
+                                />
+
+                                {/* The scrolling list of tanks that match what's typed */}
+                                {showTankList && (
+                                    <div className="dropdown-list">
+                                        {tankSizesList
+                                            .filter((tank) => tank.label.toLowerCase().includes(tankSearch.toLowerCase()))
+                                            .map((tank) => (
+                                                <div
+                                                    className="dropdown-item"
+                                                    key={tank.id}
+                                                    onMouseDown={(e) => {
+                                                        e.preventDefault()
+                                                        setTankSize(tank.label)
+                                                        setTankSearch(tank.label)
+                                                        setShowTankList(false)
+                                                    }}
+                                                >
+                                                    {tank.label}
+                                                </div>
+                                            ))}
+                                    </div>
+                                )}
+                            </div>
                         </div>
                     </div>
 
@@ -315,7 +459,10 @@ export default function AquariumEditor() {
                     {/* Vegetation */}
                     <div className='tank-setup-section'>
                         <div className="vegetation-section">
-                            <h3 className="vegetation-section-title">Select Vegetation Level</h3>
+                            <h3 className="vegetation-section-title">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" height="24px" width="24px" fill="#46b31b"><path d="M11,21V13.02q-1.6,0-3.07-0.61t-2.6-1.74T3.6,8.07T3,5V3H5Q6.58,3 8.05,3.61t2.6,1.74q0.78,0.78 1.29,1.7q0.51,0.92 0.79,1.97Q12.85,8.85 13,8.69q0.15-0.16 0.33-0.34q1.13-1.13 2.6-1.74T19,6h2V8q0,1.6-0.61,3.07t-1.74,2.6T16.06,15.4T13,16v5H11Zm0-10q0-1.2-0.46-2.29Q10.08,7.63 9.23,6.77Q8.38,5.93 7.29,5.46T5,5Q5,6.2 5.45,7.3t1.3,1.95t1.95,1.3T11,11Zm2,3q1.2,0 2.29-0.45t1.94-1.3t1.31-1.95T19,8q-1.2,0-2.3,0.46T14.75,9.77q-0.85,0.85-1.3,1.94T13,14Zm0,0Zm-2-3Z"/></svg>
+                                Select Vegetation Level                            
+                            </h3>
                             <div className="vegetation-level-options">
                                 {vegetationOptions.map((option) => (
                                     <button
@@ -329,7 +476,10 @@ export default function AquariumEditor() {
                             </div>
 
                                 {/* Lighting */}
-                                <div className='lighting-options'><span className='lighting-options-title'>Lighting Level:</span>
+                                <div className='lighting-options'><span className='lighting-options-title'>
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" height="20px" width="20px" fill="#f5c96b"><path d="M14.13,14.13Q15,13.25 15,12T14.13,9.88T12,9T9.88,9.88T9,12t0.88,2.13T12,15t2.13-0.88ZM8.46,15.54Q7,14.08 7,12Q7,9.92 8.46,8.46T12,7t3.54,1.46T17,12t-1.46,3.54T12,17q-2.07,0-3.54-1.46ZM5,13H1V11H5v2Zm18,0H19V11h4v2ZM11,5V1h2V5H11Zm0,18V19h2v4H11ZM6.4,7.75L3.88,5.32L5.3,3.85l2.4,2.5L6.4,7.75Zm12.3,12.4l-2.42-2.52l1.32-1.38l2.52,2.43L18.7,20.15ZM16.25,6.4l2.43-2.52L20.15,5.3l-2.5,2.4l-1.4-1.3ZM3.85,18.7l2.53-2.43L7.75,17.6L5.33,20.13L3.85,18.7ZM12,12Z"/></svg>
+                                    Lighting Level :
+                                    </span>
                                     {lightingOptions.map((option) => (
                                         <label>
                                             <input
@@ -346,7 +496,10 @@ export default function AquariumEditor() {
                         
                         {/* Filtration */}
                         <div className="filtration-section">
-                            <h3 className="filtration-section-title">Select Filtration Type</h3>
+                            <h3 className="filtration-section-title">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" height="24px" width="24px" fill="#70a3d3"><path d="M11.95,12.33ZM17.5,4q1.75,1.55 2.63,2.86Q21,8.17 21,9.3q0,1.5-1,2.6T17.5,13T15,11.9T14,9.3q0-1.05 0.93-2.45T17.5,4Zm0,2.77Q16.83,7.5 16.41,8.19T16,9.3q0,0.68 0.43,1.19T17.5,11t1.07-0.51Q19,9.98 19,9.3q0-0.42-0.41-1.11T17.5,6.77ZM12,22q-3.42,0-5.71-2.35T4,13.8q0-2.5 1.99-5.44Q7.98,5.43 12,2q1.35,1.15 2.48,2.25T16.5,6.4q-0.18,0.23-0.63,0.85T15.3,8.07q-0.68-0.8-1.49-1.66T12,4.65Q9.03,7.38 7.51,9.67Q6,11.98 6,13.8q0,2.68 1.7,4.44T12,20q1.3,0 2.4-0.48t1.9-1.3t1.25-1.96T18,13.8q0-0.42-0.09-0.9q-0.09-0.47-0.26-0.97q0.22-0.13 0.89-0.47t0.89-0.47q0.28,0.72 0.43,1.44T20,13.8q0,3.5-2.29,5.85T12,22Zm0.28-3q0.3-0.02 0.51-0.24T13,18.25q0-0.35-0.22-0.56T12.2,17.5q-1.03,0.07-2.18-0.56T8.58,14.63q-0.05-0.28-0.26-0.45T7.83,14q-0.35,0-0.58,0.26Q7.03,14.53 7.1,14.88q0.42,2.27 2,3.25T12.28,19ZM17.5,8.88Z"/></svg>
+                                Select Filtration Type
+                            </h3>
                             <div className="filtration-options">
                                 {filtrationOptions.map((option) => (
                                     <button
@@ -365,30 +518,66 @@ export default function AquariumEditor() {
                     {/* Add fish */}
                     <div className="add-fish-main-section">
                         <div className="fish-species-section">
-                            <h3 className="fish-species-section-title">Select Fish</h3>
-                            <input
-                                id="fish-input"
-                                list="fish-list"
-                                value={fishSearch}
-                                onChange={(e) => {
-                                    setFishSearch(e.target.value)
-                                    if (fishList.some((fish) => `${fish.name} (${fish.scientific_name})` === e.target.value)) {
-                                        setFishName(e.target.value)
-                                    }
-                                }}
-                                onMouseDown={() => setFishSearch('')}
-                                onBlur={() => setFishSearch(fishName)}
-                                placeholder="Search Fish"
-                            />
-                            <datalist id="fish-list">
-                                {fishList.map((fish) => (
-                                    <option key={fish.id} value={`${fish.name} (${fish.scientific_name})`} />
-                                ))}
-                            </datalist>
+                            <h3 className="fish-species-section-title">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#f0a46b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6.5 12c.94-3.46 4.94-6 8.5-6 3.56 0 6.06 2.54 7 6-.94 3.47-3.44 6-7 6s-7.56-2.53-8.5-6Z"/><path d="M18 12v.5"/><path d="M16 17.93a9.77 9.77 0 0 1 0-11.86"/><path d="M7 10.67C7 8 5.58 5.97 2.73 5.5c-1 1.5-1 5 .23 6.5-1.24 1.5-1.24 5-.23 6.5C5.58 18.03 7 16 7 13.33"/><path d="M10.46 7.26C10.2 5.88 9.17 4.24 8 3h5.8a2 2 0 0 1 1.98 1.67l.23 1.4"/><path d="m16.01 17.93-.23 1.4A2 2 0 0 1 13.8 21H9.5a5.96 5.96 0 0 0 1.49-3.98"/></svg>
+                                Select Fish
+                            </h3>
+                            <div className="dropdown">
+                                <input
+                                    id="fish-input"
+                                    value={fishSearch}
+                                    onChange={(e) => {
+                                        setFishSearch(e.target.value)
+                                        setShowFishList(true)
+                                        if (fishList.some((fish) => `${fish.name} (${fish.scientific_name})` === e.target.value)) {
+                                            setFishName(e.target.value)
+                                        }
+                                    }}
+                                    onMouseDown={() => {
+                                        setFishSearch('')
+                                        setShowFishList(true)
+                                    }}
+                                    onBlur={() => {
+                                        setFishSearch(fishName)
+                                        setShowFishList(false)
+                                    }}
+                                    placeholder="Search Fish"
+                                />
+
+                                {/* The scrolling list of fish that match what's typed (common or scientific name) */}
+                                {showFishList && (
+                                    <div className="dropdown-list">
+                                        {fishList
+                                            .filter((fish) =>
+                                                fish.name.toLowerCase().includes(fishSearch.toLowerCase()) ||
+                                                fish.scientific_name.toLowerCase().includes(fishSearch.toLowerCase())
+                                            )
+                                            .map((fish) => (
+                                                <div
+                                                    className="dropdown-item"
+                                                    key={fish.id}
+                                                    onMouseDown={(e) => {
+                                                        e.preventDefault()
+                                                        const label = `${fish.name} (${fish.scientific_name})`
+                                                        setFishName(label)
+                                                        setFishSearch(label)
+                                                        setShowFishList(false)
+                                                    }}
+                                                >
+                                                    {fish.name}
+                                                    <span className="dropdown-item-sub">{fish.scientific_name}</span>
+                                                </div>
+                                            ))}
+                                    </div>
+                                )}
+                            </div>
                         </div>
 
                         <div className="fish-quantity-section">
-                            <h3 className="fish-quantity-section-title">Choose Quantity</h3>
+                            <h3 className="fish-quantity-section-title">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" height="30px" width="30px" fill="#f4a3c4"><path d="M5.5,15V10.5H4V9H7v6H5.5ZM9,15V12.5q0-0.43 0.29-0.71Q9.58,11.5 10,11.5h2v-1H9V9h3.5q0.43,0 0.71,0.29T13.5,10v1.5q0,0.42-0.29,0.71T12.5,12.5h-2v1h3V15H9Zm6,0V13.5h3v-1H16v-1h2v-1H15V9h3.5q0.43,0 0.71,0.29T19.5,10v4q0,0.42-0.29,0.71T18.5,15H15Z"/></svg>
+                                Choose Quantity
+                            </h3>
                             <div className="quantity-field">
                                 <div className="quantity-row">
                                     <input
@@ -506,9 +695,9 @@ export default function AquariumEditor() {
                     {/* Stocking level + warnings + tank summary */}
                     <div className="stocking-section">
                         <div className="stocking-header">
-                            <h3 className="stocking-section-title">Stocking Level:</h3>
+                            <h3 className="stocking-section-title">Stocking Level</h3>
                             <div className="stocking-value-container">
-                                <span className="stocking-value shimmer-wave shimmer-wave-text shimmer-moderate">{Math.round(stockingPercentage)}%</span>
+                                <span className={`stocking-value shimmer-wave shimmer-wave-text shimmer-moderate ${stockingShimmer}`}>{Math.round(stockingPercentage)}%</span>
                             </div>
                         </div>
 
@@ -531,59 +720,80 @@ export default function AquariumEditor() {
                         </div>
 
                         {/* Tank summary: temp, pH, water change */}
-                        
                         <div className="your-fish-results">
                             {selectedFishList.length > 0 && (
                                 <div className="temp-range-container">
-                                    {selectedFishList.length > 0 && (
-                                        <h4 className="temp-range-result">
+                                    <h4 className="temp-range-result">
+                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" height="24px" width="24px" fill="#ef8a80"><path d="M8.46,20.54Q7,19.08 7,17q0-1.2 0.53-2.24T9,13V5Q9,3.75 9.88,2.88T12,2t2.13,0.88T15,5v8q0.95,0.72 1.48,1.76T17,17q0,2.07-1.46,3.54T12,22q-2.07,0-3.54-1.46ZM11,11h2V10H12V9h1V7H12V6h1V5q0-0.43-0.29-0.71T12,4T11.29,4.29T11,5v6Z"/></svg>
+                                        <span>
                                             Recommended temperature:{' '}
                                             {tempRange.low > tempRange.high
                                                 ? <span className="incompatible">incompatible</span>
-                                                : <span className="temp-range">{tempRange.low}-{tempRange.high}°F</span>}
-                                        </h4>
-                                    )}
+                                                : tempRange.low === tempRange.high
+                                                    ? <span className="temp-range">{tempRange.low}°F</span>
+                                                    : <span className="temp-range">{tempRange.low}-{tempRange.high}°F</span>}
+                                        </span>
+                                    </h4>
                                 </div>
                             )}
 
                             {selectedFishList.length > 0 && (
                                 <div className="ph-range-container">
-                                    {selectedFishList.length > 0 && (
-                                        <h4 className="ph-range-result">
+                                    <h4 className="ph-range-result">
+                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" height="24px" width="24px" fill="#6ed3c2"><path d="M9,21.95Q5.950,21.6 3.98,19.33T2,13.8q0-2.5 1.99-5.44Q5.98,5.43 10,2q4.03,3.43 6.01,6.36T18,13.8q0,0.05 0,0.1T18,14H16q0-0.05 0-0.1t0-0.1q0-1.82-1.51-4.13Q12.98,7.38 10,4.65Q7.03,7.38 5.51,9.67Q4,11.98 4,13.8q0,2.43 1.4,4.1Q6.8,19.58 9,19.93v2.02Zm1-9.68ZM11,22V16h3.5q0.6,0 1.05,0.45T16,17.5v1q0,0.6-0.45,1.05T14.5,20h-2v2H11Zm6,0V16h1.5v2h2V16H22v6H20.5V19.5h-2V22H17Zm-4.5-3.5h2v-1h-2v1Z"/></svg>
+                                        <span>
                                             Recommended pH:{' '}
                                             {phRange.low > phRange.high
                                                 ? <span className="incompatible">incompatible</span>
-                                                : <span className="ph-range">{phRange.low}-{phRange.high}</span>}
-                                        </h4>
-                                    )}
+                                                : phRange.low === phRange.high
+                                                    ? <span className="ph-range">{phRange.low}</span>
+                                                    : <span className="ph-range">{phRange.low}-{phRange.high}</span>}
+                                        </span>
+                                    </h4>
                                 </div>
                             )}
 
                             {selectedFishList.length > 0 && selectedTank && (
                                 <div className="water-change-suggestion-container">
-                                    {selectedFishList.length > 0 && (
-                                        <h4 className="water-change-suggestion-result">Suggested water change schedule: <span className="water-change">{waterChange}</span></h4>
-                                    )}
+                                    <h4 className="water-change-suggestion-result">
+                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" height="24px" width="24px" fill="#70a3d3"><path d="M11.95,12.33ZM17.5,4q1.75,1.55 2.63,2.86Q21,8.17 21,9.3q0,1.5-1,2.6T17.5,13T15,11.9T14,9.3q0-1.05 0.93-2.45T17.5,4Zm0,2.770Q16.83,7.5 16.41,8.19T16,9.3q0,0.68 0.43,1.19T17.5,11t1.07-0.51Q19,9.98 19,9.3q0-0.42-0.41-1.11T17.5,6.77ZM12,22q-3.42,0-5.71-2.35T4,13.8q0-2.5 1.99-5.44Q7.98,5.43 12,2q1.35,1.15 2.48,2.25T16.5,6.4q-0.18,0.23-0.63,0.85T15.3,8.07q-0.68-0.8-1.49-1.66T12,4.65Q9.03,7.38 7.51,9.67Q6,11.98 6,13.8q0,2.68 1.7,4.44T12,20q1.3,0 2.4-0.48t1.9-1.3t1.25-1.96T18,13.8q0-0.42-0.09-0.9q-0.09-0.47-0.26-0.97q0.22-0.13 0.89-0.47t0.89-0.47q0.28,0.72 0.43,1.44T20,13.8q0,3.5-2.29,5.85T12,22Zm0.28-3q0.3-0.02 0.51-0.24T13,18.250q0-0.35-0.22-0.56T12.2,17.5q-1.03,0.07-2.18-0.56T8.58,14.63q-0.05-0.28-0.26-0.45T7.83,14q-0.35,0-0.58,0.26Q7.03,14.53 7.1,14.88q0.42,2.27 2,3.25T12.28,19ZM17.5,8.88Z"/></svg>
+                                        <span>
+                                            Suggested water change schedule:{' '}
+                                            <span className="water-change">{waterChange}</span>
+                                        </span>
+                                    </h4>
                                 </div>
                             )}
 
                             {selectedFishList.length > 0 && selectedTank && (
                                 <div className="flow-rate-suggestion-container">
                                     <h4 className="flow-rate-suggestion-result">
+                                        {/* Icon: bubbles for sponge, swirl for everything else */}
+                                        {filterType === 'sponge'
+                                            ? <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#8490f5" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M7.001 15.085A1.5 1.5 0 0 1 9 16.5"/><circle cx="18.5" cy="8.5" r="3.5"/><circle cx="7.5" cy="16.5" r="5.5"/><circle cx="7.5" cy="4.5" r="2.5"/></svg>
+                                            : <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" height="24px" width="24px" fill="#8490f5"><path d="M12,16q-1.65,0-2.82-1.18T8,12T9.18,9.17T12,8t2.83,1.17T16,12t-1.17,2.82T12,16Zm0-2q0.83,0 1.41-0.59T14,12t-0.59-1.41T12,10t-1.41,0.59Q10,11.18 10,12t0.59,1.41T12,14Zm4.53,8q0.45-1.4 0.67-2.5q0.23-1.1 0.35-1.75q-1.07,1.05-2.5,1.65T12,20q-3.4,0-5.96-0.46T2,18.65V16.52q1.4,0.45 2.5,0.68q1.1,0.23 1.75,0.35Q5.2,16.48 4.6,15.05Q4,13.630 4,12Q4,8.57 4.46,6.02T5.35,2H7.48Q7.03,3.4 6.79,4.5T6.45,6.25Q7.53,5.2 8.95,4.6T12,4q3.43,0 5.98,0.46Q20.53,4.93 22,5.35V7.47q-1.4-0.45-2.5-0.69T17.75,6.45q1.05,1.07 1.65,2.5T20,12q0,3.42-0.46,5.98T18.65,22H16.53Zm-0.28-5.75Q18,14.5 18,12T16.25,7.75T12,6T7.75,7.75T6,12t1.75,4.25T12,18t4.25-1.75Z"/></svg>
+                                        }
+
+                                        {/* Text */}
                                         <span>
                                             {filterType === 'sponge'
                                                 ? <>Suggested filter: <span className="flow-rate">{getSpongeSuggestion(stockingPercentage, tankGallons)}</span></>
                                                 : <>Suggested flow rate: <span className="flow-rate">At least {flowRate} GPH</span></>
                                             }
+
+                                            {/* Info icon */}
+                                            <svg
+                                                className={showFilterInfo ? 'suggested-flowrate-info-svg active' : 'suggested-flowrate-info-svg'}
+                                                onClick={() => setShowFilterInfo(!showFilterInfo)}
+                                                onMouseDown={(e) => e.preventDefault()}
+                                                xmlns="http://www.w3.org/2000/svg" height="18px" viewBox="0 -960 960 960" width="18px" fill="#e3e3e3"
+                                            >
+                                                <path d="M440-280h80v-240h-80v240Zm68.5-331.5Q520-623 520-640t-11.5-28.5Q497-680 480-680t-28.5 11.5Q440-657 440-640t11.5 28.5Q463-600 480-600t28.5-11.5ZM480-80q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320Z"/>
+                                            </svg>
+
                                         </span>
-                                        <svg
-                                            className={showFilterInfo ? 'suggested-flowrate-info-svg active' : 'suggested-flowrate-info-svg'}
-                                            onClick={() => setShowFilterInfo(!showFilterInfo)}
-                                            onMouseDown={(e) => e.preventDefault()}
-                                            xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="#e3e3e3"
-                                        >
-                                            <path d="M440-280h80v-240h-80v240Zm68.5-331.5Q520-623 520-640t-11.5-28.5Q497-680 480-680t-28.5 11.5Q440-657 440-640t11.5 28.5Q463-600 480-600t28.5-11.5ZM480-80q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320Z"/>
-                                        </svg>
+
+                                        
                                     </h4>
 
                                     <div className='flowrate-info-container'>
@@ -604,7 +814,7 @@ export default function AquariumEditor() {
                             <h3 className="compatibility-section-title">Compatibility Score: </h3>
                             <div className="compatibility-value-container">
                             {selectedFishList.length > 0 && selectedTank
-                                ? <span className="compatibility-value shimmer-wave shimmer-wave-text">{compatibilityScore}%</span>
+                                ? <span className={`compatibility-value shimmer-wave shimmer-wave-text ${scoreShimmer}`}>{compatibilityScore}%</span>
                                 : <span className="compatibility-value shimmer-wave shimmer-wave-text">---</span>
                             }
                             </div>
@@ -628,12 +838,32 @@ export default function AquariumEditor() {
                     </div>
                     
                     <div className='stocking-advice-section'>
-                        {/* TODO: Gemini will suggest changes to the user's stocking here */}
-                        <button className="stocking-advice-btn">Get Stocking Advice</button>
-                    </div>
-                    
-                </div>
+                        <button
+                            className="stocking-advice-btn"
+                            onClick={getAdvice}
+                            disabled={isLoadingAdvice || !selectedTank || selectedFishList.length === 0}
+                        >
+                            {isLoadingAdvice ? 'Thinking...' : advice ? 'Regenerate Advice' : 'Get Stocking Advice'}
+                        </button>
 
+                        {adviceError && <p className="advice-error">{adviceError}</p>}
+
+                        {advice && (
+                            <div className="advice-box" key={advice}>
+                                <p className="advice-text">{advice}</p>
+
+                                {/* X button: clears the advice */}
+                                <svg
+                                    className="advice-close-icon"
+                                    onClick={() => setAdvice('')}
+                                    xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="#e3e3e3"
+                                >
+                                    <path d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z"/>
+                                </svg>
+                            </div>
+                        )}
+                    </div>
+                </div>
             </div>
         </div>
     )
