@@ -56,8 +56,32 @@ function isTerritorial(fish: { adult_size_inches: number; waste_multiplier: numb
 
 // Where each fish spends its time, by the first word of its scientific name (the genus).
 // Fish in different zones share a tank better than fish in the same zone.
-const bottomGenera = ['Hoplisoma', 'Osteogaster', 'Brochis', 'Scleromystax', 'Gastrodermus', 'Ancistrus', 'Hypancistrus', 'Panaqolus', 'Peckoltia', 'Dekeyseria', 'Chaetostoma', 'Hemiancistrus', 'Baryancistrus', 'Leporacanthicus', 'Scobinancistrus', 'Pterygoplichthys', 'Panaque', 'Parotocinclus', 'Otocinclus', 'Pangio', 'Mikrogeophagus']
-const topGenera = ['Trichogaster', 'Trichopodus', 'Trichopsis', 'Sphaerichthys', 'Helostoma', 'Osphronemus', 'Betta', 'Macropodus', 'Anabas', 'Dermogenys', 'Nomorhamphus']
+const bottomGenera = [
+  'Hoplisoma', 'Osteogaster', 'Brochis', 'Scleromystax', 
+  'Gastrodermus', 'Ancistrus', 'Hypancistrus', 'Panaqolus', 
+  'Peckoltia', 'Dekeyseria', 'Chaetostoma', 'Hemiancistrus', 
+  'Baryancistrus', 'Leporacanthicus', 'Scobinancistrus', 'Pterygoplichthys', 
+  'Panaque', 'Parotocinclus', 'Otocinclus', 'Pangio', 
+  'Mikrogeophagus', 'Apistogramma', 'Pelvicachromis', 'Dicrossus',
+  'Nannacara', 'Neolamprologus', 'Anomalochromis'
+]
+const topGenera = [
+  'Trichogaster', 'Trichopodus', 'Trichopsis', 'Sphaerichthys', 
+  'Helostoma', 'Osphronemus', 'Betta', 'Macropodus', 
+  'Anabas', 'Dermogenys', 'Nomorhamphus'
+]
+
+
+// Dwarf cichlids claim floor territory, and a tank's floor grows slower than its gallons
+// (a 75 has 3.75x the water of a 20 but only about 2.4x the floor).
+// Above 20 gallons, each one counts a bit more so big tanks don't fit too many.
+const floorTerritoryGenera = ['Mikrogeophagus', 'Apistogramma', 'Pelvicachromis', 'Dicrossus', 'Nannacara', 'Laetacara']
+function floorTerritoryFactor(genus: string, tankGallons: number) {
+  if (!floorTerritoryGenera.includes(genus) || tankGallons <= 20) {
+    return 1
+  }
+  return (tankGallons / 20) ** 0.5
+}
 
 // Adds up the waste score of every fish in the tank, times how many of each.
 // Result is roughly "how many neons' worth of waste" the tank makes.
@@ -68,14 +92,19 @@ export function calculateTotalWasteScore(
   let bottom = 0
   let middle = 0
   let top = 0
+  // Dwarf cichlids get their own zone, since corys and plecos don't fight them for caves
+  let cichlid = 0
   // The biggest discount any one territorial fish could get
   let biggestDiscount = 0
 
+  
   for (const fish of fishList) {
-    const fishScore = oneFishScore(fish, tankGallons, fish.waste_multiplier)
     const genus = fish.scientific_name.split(' ')[0]
+    const fishScore = oneFishScore(fish, tankGallons, fish.waste_multiplier) * floorTerritoryFactor(genus, tankGallons)
 
-    if (bottomGenera.includes(genus)) {
+    if (floorTerritoryGenera.includes(genus)) {
+      cichlid += fishScore * fish.quantity
+    } else if (bottomGenera.includes(genus)) {
       bottom += fishScore * fish.quantity
     } else if (topGenera.includes(genus)) {
       top += fishScore * fish.quantity
@@ -83,7 +112,7 @@ export function calculateTotalWasteScore(
       middle += fishScore * fish.quantity
     }
 
-    
+
 
     if (isTerritorial(fish)) {
       const discount = fishScore - oneFishScore(fish, tankGallons, 1)
@@ -103,7 +132,7 @@ export function calculateTotalWasteScore(
   // - a small extra zone adds very little (12 danios + 6 corys is barely more than the danios)
   // - two busy zones add up more (two equal zones count about 1.4x one zone)
   // Tested against hobbyist community tanks from 10 to 125 gallons.
-  return Math.sqrt(zoneSquared(bottom) + zoneSquared(middle) + zoneSquared(top))
+  return Math.sqrt(zoneSquared(bottom) + zoneSquared(middle) + zoneSquared(top) + zoneSquared(cichlid))
 }
 
 // A zone's score squared. Never below 0, in case the territorial discount pushed it under.

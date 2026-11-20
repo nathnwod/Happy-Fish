@@ -373,7 +373,7 @@
 
 /* The list of fish cards: scrolls instead of growing forever */
 .fish-list {
-  max-height: 25vh;
+  max-height: 50vh;
   overflow-y: auto;
   padding-right: .75rem;   /* keeps the scrollbar off the cards */
   scrollbar-color: #6c679bee transparent;
@@ -469,9 +469,7 @@
 .current-tank-info-cards{
   display: flex;
   gap: .5rem;
-
- 
- 
+  margin-bottom: 1rem;
 }
 
 .fish-header h4 {
@@ -530,7 +528,7 @@
 .skill-level {
   display: flex;
   align-items: center;
-  gap: .5rem;
+  /* gap: .5rem; */
   flex-shrink: 0;
 }
 

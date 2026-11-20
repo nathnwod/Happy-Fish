@@ -155,6 +155,25 @@ export function getStockingWarnings(
         warnings.push({ text: "You have more than one kind of gourami, betta or paradise fish. They all claim the water's surface, so different kinds often chase and fight. It can work in a big, heavily planted tank, but watch them closely.", isWarning: true })
     }
 
+    
+    // Dwarf cichlids all claim a patch of the bottom, so different species fight over caves
+    const dwarfCichlidGenera = [
+        'Mikrogeophagus', 'Apistogramma', 'Pelvicachromis', 
+        'Dicrossus', 'Nannacara', 'Cleithracara', 
+        'Neolamprologus', 'Laetacara', 'Anomalochromis'
+    ]
+    // Color forms count as the same species
+    const dwarfCichlidSpecies: string[] = []
+    for (const fish of selectedFishList) {
+        const species = fish.scientific_name.split(' (')[0]
+        if (dwarfCichlidGenera.includes(species.split(' ')[0]) && !dwarfCichlidSpecies.includes(species)) {
+            dwarfCichlidSpecies.push(species)
+        }
+    }
+    if (dwarfCichlidSpecies.length >= 2) {
+        warnings.push({ text: "You have more than one kind of dwarf cichlid. They all claim a patch of the bottom, so different kinds often fight over caves, especially when breeding. It can work in a big tank with lots of caves and plants, but watch them closely.", isWarning: true })
+    }
+
     for (const fish of selectedFishList) {
         if (fish.avoid_pair && fish.quantity === 2) {
             warnings.push({ text: `Two ${fish.name} often fight. Keep one, or three or more.`, isWarning: true })

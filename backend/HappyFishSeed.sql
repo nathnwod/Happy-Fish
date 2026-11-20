@@ -185,7 +185,7 @@ VALUES
     'Sailfin plecos grow huge, often over a foot long, and make a lot of waste. They may suck on the slime coat of slow, flat fish like angelfish and discus.',
     73, 80, 6.5, 7.8, NULL, 1.95),
 
-  ('Royal Pleco', 'Panaque nigrolineatus', 'Intermediate', 17.0, 0.02884, 2.98, 125, NULL, 1, false, 'peaceful',
+  ('Royal Pleco', 'Panaque nigrolineatus', 'Intermediate', 17.0, 0.02884, 2.98, 125, NULL, NULL, false, 'peaceful',
     'Royal plecos eat wood, so they need large driftwood at all times. They grow huge and make a lot of waste.',
     72, 78, 6.5, 7.5, NULL, 1.6);
 
@@ -364,7 +364,6 @@ VALUES
   ('Ember Tetra', 'Hyphessobrycon amandae', 'Intermediate', 1.0, 0.01202, 3.09, 10, 6, NULL, NULL, 'peaceful',
     NULL,
     73, 82, 5.5, 7.5, NULL, 1.5),
-	UPDATE species SET waste_multiplier = 1.5 WHERE name = 'Ember Tetra';
 
   ('Green Neon Tetra', 'Paracheirodon simulans', 'Intermediate', 1.25, 0.01122, 3.08, 10, 6, NULL, false, 'peaceful',
     'Green neon tetras need soft, acidic water and are usually wild caught, so they do best in a mature tank.',
@@ -1001,16 +1000,16 @@ VALUES
     'Snakeskin gouramis grow 8 to 10 inches but are very peaceful and hardy. Bullies stress them, so keep calm tankmates. Groups need a big tank, and very small fish or shrimp may get eaten.',
     73, 84, 6.0, 8.4, 1, 1),
 
-  ('Kissing Gourami', 'Helostoma temminckii', 'Intermediate', 10.0, 0.01995, 3.01, 75, NULL, 3, false, 'semi-aggressive',
+  ('Kissing Gourami', 'Helostoma temminckii', 'Intermediate', 10.0, 0.01995, 3.01, 75, NULL, NULL, false, 'semi-aggressive',
     'Kissing gouramis grow to about 10 inches, and their "kissing" is males fighting, not affection. They make a lot of waste and eat or uproot most live plants.',
     72, 82, 6.8, 8.5, NULL, 1.5),
 
   -- Giant gouramis (20"+)
-  ('Giant Red Tail Gourami', 'Osphronemus laticlavius', 'Intermediate', 20.0, 0.01698, 3.01, 180, NULL, 1, false, 'peaceful',
+  ('Giant Red Tail Gourami', 'Osphronemus laticlavius', 'Intermediate', 20.0, 0.01698, 3.01, 180, NULL, NULL, false, 'peaceful',
     'Giant red tail gouramis grow about 20 inches and are mostly plant eaters that need lots of vegetables. They are very messy and will eat small fish.',
     70, 84, 6.5, 7.8, 3, 1.5),
 
-  ('Giant Gourami', 'Osphronemus goramy', 'Intermediate', 24.0, 0.01698, 3.01, 265, NULL, 1, false, 'peaceful',
+  ('Giant Gourami', 'Osphronemus goramy', 'Intermediate', 24.0, 0.01698, 3.01, 265, NULL, NULL, false, 'peaceful',
     'Giant gouramis are sold small but grow about 2 feet long and live over 20 years. They are very messy and will eat smaller fish.',
     68, 86, 6.5, 8.0, 3, 1.5),
 
@@ -1043,36 +1042,180 @@ VALUES
     'Dumbo bettas, also called elephant ear bettas, have huge side fins that make them slow swimmers. Gentle flow and resting spots near the surface help.',
     72, 86, 6.0, 7.5, NULL, 1),
 
-  ('Peaceful Betta', 'Betta imbellis', 'Intermediate', 2.25, 0.00977, 2.97, 10, NULL, 4, false, 'peaceful',
+  ('Peaceful Betta', 'Betta imbellis', 'Intermediate', 2.25, 0.00977, 2.97, 10, NULL, NULL, false, 'peaceful',
     'Peaceful bettas are calmer than regular bettas, but males still fight each other in small tanks. They prefer soft, acidic water and need a gap under the lid to breathe air.',
-    75, 82, 6.0, 7.0, NULL, 1),
+    75, 82, 6.0, 7.0, NULL, 2),
 
   -- Paradise fish
-  ('Paradise Fish', 'Macropodus opercularis', 'Beginner', 3, 0.01288, 2.97, 15, NULL, 2, false, 'aggressive',
+  ('Paradise Fish', 'Macropodus opercularis', 'Beginner', 3.0, 0.01288, 2.97, 20, NULL, NULL, false, 'aggressive',
     'Paradise fish handle cool water and can live in unheated tanks. Males fight each other and can attack small or slow fish, so tankmates should be sturdy.',
-    61, 82, 6.0, 8.0, 1, 1),
+    61, 82, 6.0, 8.0, 1, 3),
 
-  ('Albino Paradise Fish', 'Macropodus opercularis (Albino)', 'Beginner', 3.0, 0.01288, 2.97, 15, NULL, 2, false, 'aggressive',
+  ('Albino Paradise Fish', 'Macropodus opercularis (Albino)', 'Beginner', 3.0, 0.01288, 2.97, 20, NULL, NULL, false, 'aggressive',
     'Albino paradise fish are a pink-white form with red eyes. They are just as hardy and cold tolerant, and males fight each other.',
-    61, 82, 6.0, 8.0, 1, 1),
+    61, 82, 6.0, 8.0, 1, 3),
 
-  ('Blue Paradise Fish', 'Macropodus opercularis (Blue)', 'Beginner', 3.0, 0.01288, 2.97, 15, NULL, 2, false, 'aggressive',
+  ('Blue Paradise Fish', 'Macropodus opercularis (Blue)', 'Beginner', 3.0, 0.01288, 2.97, 20, NULL, NULL, false, 'aggressive',
     'Blue paradise fish are a color form of the paradise fish. They are strong jumpers, so a tight-fitting lid matters.',
-    61, 82, 6.0, 8.0, 1, 1),
+    61, 82, 6.0, 8.0, 1, 3),
 
-  ('Round Tail Paradise Fish', 'Macropodus ocellatus', 'Beginner', 3.0, 0.01479, 2.91, 20, NULL, 4, false, 'semi-aggressive',
+  ('Round Tail Paradise Fish', 'Macropodus ocellatus', 'Beginner', 3.0, 0.01479, 2.91, 20, NULL, NULL, false, 'semi-aggressive',
     'Round tail paradise fish are true cold water fish that do best unheated, with a cooler winter period. Males get territorial when breeding.',
-    50, 72, 6.0, 7.5, NULL, 1),
+    50, 72, 6.0, 8.0, NULL, 1.75),
 
-  ('Black Paradise Fish', 'Macropodus spechti', 'Beginner', 4.75, 0.01622, 2.97, 20, NULL, 4, false, 'semi-aggressive',
+  ('Black Paradise Fish', 'Macropodus spechti', 'Beginner', 3.5, 0.01622, 2.97, 20, NULL, NULL, false, 'semi-aggressive',
     'Black paradise fish are hardy and handle a wide range of temperatures. Males fight each other, so a pair or 1 male with females works best.',
-    68, 83, 6.0, 8.0, NULL, 1),
+    68, 83, 6.0, 8.0, NULL, 1.75),
 
   -- Gourami relatives
   ('Climbing Perch', 'Anabas testudineus', 'Intermediate', 8.0, 0.02344, 2.93, 55, NULL, NULL, false, 'aggressive',
     'Climbing perch can crawl out of the water and travel over land, so a tight lid with a small air gap matters. They are predators that eat smaller fish.',
     72, 86, 5.5, 8.0, 2, 1);
 
+
+
+
+
+
+-- DWARF CICHLIDS --
+
+INSERT INTO species (name, scientific_name, skill_level, adult_size_inches, weight_a, weight_b, min_tank_gallons, min_group_size, max_group_size, avoid_pair, temperament, care_note, min_temp, max_temp, min_ph, max_ph, eats_fish_under_inches, waste_multiplier)
+VALUES
+  -- German blue ram and its forms
+  ('German Blue Ram', 'Mikrogeophagus ramirezi', 'Intermediate', 2.25, 0.01445, 3.08, 20, NULL, NULL, false, 'peaceful',
+    'German blue rams pair up for life, so keep a single pair rather than a trio, since the pair will chase the extra fish. They need warm water around 80-86°F, so most corys and cool water fish cannot share their tank. Only add them to a tank that has been running for a few months, since they are sensitive to dirty or changing water.',
+    80, 86, 5.0, 7.0, NULL, 2.75),
+
+  ('Electric Blue Ram', 'Mikrogeophagus ramirezi (Electric Blue)', 'Intermediate', 2.25, 0.01445, 3.08, 20, NULL, NULL, false, 'peaceful',
+    'Electric blue rams are a bred form of the German blue ram, and they are more delicate, with weaker immune systems and shorter lives. Keep a single pair in warm water around 80-86°F, and only add them to a tank that has been running for a few months. Buy from a store that has had them for a while, since new arrivals often die in the first few weeks.',
+    80, 86, 5.0, 7.0, NULL, 2.75),
+
+  ('Gold Ram', 'Mikrogeophagus ramirezi (Gold)', 'Intermediate', 2.25, 0.01445, 3.08, 20, NULL, NULL, false, 'peaceful',
+    'Gold rams are a yellow-gold form of the German blue ram and need the same warm water around 80-86°F. Keep a single pair rather than a trio, since the pair will chase the extra fish. Bred forms are weaker than regular rams, so clean, stable water matters even more.',
+    80, 86, 5.0, 7.0, NULL, 2.75),
+
+  ('Balloon Ram', 'Mikrogeophagus ramirezi (Balloon)', 'Intermediate', 1.75, 0.01445, 3.08, 20, NULL, NULL, false, 'peaceful',
+    'Balloon rams are short, but they eat and make waste like a full-size ram. Their shortened spine squeezes their organs and causes swim bladder and digestion problems, so feed small meals. They swim slowly and lose out on food to fast tankmates, and they usually live shorter lives than regular rams.',
+    80, 86, 5.0, 7.0, NULL, 4.1),
+
+  -- Cockatoo dwarf cichlid and its forms
+  ('Cockatoo Dwarf Cichlid', 'Apistogramma cacatuoides', 'Beginner', 3.0, 0.01820, 2.99, 20, NULL, NULL, false, 'peaceful',
+    'Cockatoo cichlids are one of the hardiest apistos and handle a wider pH range than most. Keep 1 male with 1-3 females and give each female her own cave, since she defends it hard while raising fry. Do not mix them with other apisto species.',
+    72, 84, 6.0, 8.0, NULL, 1.5),
+
+  ('Double Red Cockatoo Dwarf Cichlid', 'Apistogramma cacatuoides (Double Red)', 'Beginner', 3.0, 0.01820, 2.99, 20, NULL, NULL, false, 'peaceful',
+    'Double red cockatoos are a bred form with red-orange fins. Tank-bred strains like this adapt to a wider range of water than wild fish. Keep 1 male with 1-3 females and give each female her own cave, and feed a varied diet to keep the red color strong.',
+    72, 84, 6.0, 8.0, NULL, 1.5),
+
+  ('Orange Flash Cockatoo Dwarf Cichlid', 'Apistogramma cacatuoides (Orange Flash)', 'Beginner', 3.0, 0.01820, 2.99, 20, NULL, NULL, false, 'peaceful',
+    'Orange flash cockatoos are a bred form with orange fin tips and face stripes. Keep 1 male with 1-3 females, give each female her own cave, and do not mix them with other apisto species. Females turn bright yellow and black when guarding eggs, which is normal.',
+    72, 84, 6.0, 8.0, NULL, 1.5),
+
+  -- Agassiz's dwarf cichlid and its forms
+  ('Agassiz''s Dwarf Cichlid', 'Apistogramma agassizii', 'Intermediate', 2.75, 0.01778, 2.98, 20, NULL, NULL, false, 'peaceful',
+    'Agassiz''s dwarf cichlids need soft, acidic water and a cave for each female, and leaf litter helps them feel safe. Keep 1 male with 2-3 females, since males fight each other. Colors vary a lot between strains.',
+    75, 84, 5.0, 7.0, NULL, 1.6),
+
+  ('Fire Red Agassiz''s Dwarf Cichlid', 'Apistogramma agassizii (Fire Red)', 'Intermediate', 2.75, 0.01778, 2.98, 20, NULL, NULL, false, 'peaceful',
+    'Fire red agassizii are a bred form where males get bright red-orange tails, while females stay yellow and much plainer. They still need soft, acidic water and a cave for each female. Keep 1 male with 2-3 females, since males fight each other.',
+    75, 84, 5.0, 7.0, NULL, 1.6),
+
+  ('Double Red Agassiz''s Dwarf Cichlid', 'Apistogramma agassizii (Double Red)', 'Intermediate', 2.75, 0.01778, 2.98, 20, NULL, NULL, false, 'peaceful',
+    'Double red agassizii are a bred form with red in both the tail and the top fin. Like other agassizii, they need soft, acidic water, leaf litter, and a cave for each female. Keep 1 male with 2-3 females, since males fight each other.',
+    75, 84, 5.0, 7.0, NULL, 1.6),
+
+  -- Borelli's dwarf cichlid and its forms
+  ('Borelli''s Dwarf Cichlid', 'Apistogramma borellii', 'Beginner', 2.25, 0.02138, 2.99, 15, NULL, NULL, false, 'peaceful',
+    'Borelli''s dwarf cichlids are one of the calmest apistos and like cooler water than most, so they fit well with corys. A pair or 1 male with 2 females works best, each with a small cave.',
+    68, 79, 6.0, 8.0, NULL, 2),
+
+  ('Opal Borelli''s Dwarf Cichlid', 'Apistogramma borellii (Opal)', 'Beginner', 2.25, 0.02138, 2.99, 15, NULL, NULL, false, 'peaceful',
+    'Opal borelli''s are the common store form, with shiny blue males and yellow heads. They like cooler water than most apistos, so they fit well with corys. A pair or 1 male with 2 females works best, each with a small cave.',
+    68, 79, 6.0, 8.0, NULL, 2),
+
+  -- Other apistogramma
+  ('Macmaster''s Dwarf Cichlid', 'Apistogramma macmasteri', 'Intermediate', 2.5, 0.01820, 2.99, 20, NULL, NULL, false, 'peaceful',
+    'Macmaster''s dwarf cichlids need soft water and a steady temperature. Keep 1 male with 2-3 females and a cave for each female. Wild caught fish are fussier than tank raised ones.',
+    75, 82, 5.5, 7.0, NULL, 1.75),
+
+  ('Viejita Dwarf Cichlid', 'Apistogramma viejita', 'Intermediate', 2.5, 0.01820, 2.99, 20, NULL, NULL, false, 'peaceful',
+    'Many fish sold as viejita are really macmaster''s dwarf cichlids, so check that males have a dark edge along the top of the back fin. They need soft water and a mature tank, since they are sensitive to waste buildup. Keep 1 male with 2-3 females and a cave for each female.',
+    72, 82, 5.0, 7.0, NULL, 1.75),
+
+  ('Hongsloi Dwarf Cichlid', 'Apistogramma hongsloi', 'Beginner', 2.75, 0.01820, 2.99, 15, NULL, NULL, false, 'peaceful',
+    'Hongsloi dwarf cichlids pair up and raise their fry together, so keep a single pair rather than a male with several females. They like soft, slightly acidic water, leaf litter, and gentle filter flow. A female guarding fry can get very aggressive in a small tank.',
+    73, 84, 5.5, 7.0, NULL, 1.75),
+
+  ('Three-Striped Dwarf Cichlid', 'Apistogramma trifasciata', 'Intermediate', 2.25, 0.01820, 2.99, 15, NULL, NULL, false, 'peaceful',
+    'Three-striped dwarf cichlids are one of the smaller apistos, named for the extra stripe that runs along the belly. Keep 1 male with 2-3 females and a cave for each female. Tank-bred fish handle neutral water, but wild ones need very soft, acidic water.',
+    72, 81, 5.0, 7.0, NULL, 2.2),
+
+  ('Panda Dwarf Cichlid', 'Apistogramma nijsseni', 'Intermediate', 2.75, 0.01820, 2.99, 20, NULL, NULL, false, 'peaceful',
+    'Panda dwarf cichlids do best as a pair, or as 1 male with 2-3 females in a bigger tank, since males fight each other. They need very soft, acidic water and a steady temperature, plus caves and plants that block lines of sight so each fish can claim its own spot. Females are bright yellow with black spots, while males are bluish with a red edge on the tail.',
+    75, 82, 5.0, 6.5, NULL, 2.5),
+
+  ('Inca Dwarf Cichlid', 'Apistogramma baenschi', 'Intermediate', 2.5, 0.01820, 2.99, 30, NULL, NULL, false, 'peaceful',
+    'Inca dwarf cichlids, often sold as Inka 50, need soft, acidic water, and their eggs only develop in very soft water. Keep 1 male with 2-3 females and a cave for each, since males claim large territories and chase other males. Only add them to a well-established tank, since they are sensitive to waste buildup.',
+    72, 79, 5.0, 6.5, NULL, 1.75),
+
+  -- Kribensis
+  ('Kribensis', 'Pelvicachromis pulcher', 'Beginner', 3.5, 0.01445, 2.99, 30, NULL, NULL, false, 'semi-aggressive',
+    'Kribensis pair up, so keep a single pair rather than a trio, since the pair will chase the extra fish. A breeding pair gets very territorial with other fish too, especially bottom dwellers like corys. They dig pits in sand and may uproot plants, so give them a cave.',
+    75, 81, 6.0, 8.0, NULL, 2.25),
+
+  ('Albino Kribensis', 'Pelvicachromis pulcher (Albino)', 'Beginner', 3.5, 0.01445, 2.99, 30, NULL, NULL, false, 'semi-aggressive',
+    'Albino kribensis are a white form with red eyes, and their weaker eyesight makes them prefer dimmer light and plenty of cover. Keep a single pair rather than a trio, since the pair will chase the extra fish. A breeding pair gets very territorial, especially with bottom dwellers like corys.',
+    75, 81, 6.0, 8.0, NULL, 2.25),
+
+  ('Striped Kribensis', 'Pelvicachromis taeniatus', 'Beginner', 3.0, 0.01445, 2.99, 20, NULL, NULL, false, 'peaceful',
+    'Keep striped kribensis as a single pair with a cave like a clay pot, since more than one pair needs a big tank. They are shy, so avoid big or pushy tankmates, and keep corys and other bottom dwellers out while they breed. Named forms like Nigeria Red and Moliwe should not be mixed, so buy a male and female of the same form.',
+    72, 79, 6.0, 7.5, NULL, 2.3),
+
+  -- Other South American dwarf cichlids
+  ('Keyhole Cichlid', 'Cleithracara maronii', 'Beginner', 3.5, 0.03548, 3.11, 30, NULL, NULL, false, 'peaceful',
+    'Keyhole cichlids pair up as adults, so keep a single pair rather than a trio. They are very shy and do best with calm schooling fish like tetras, since boisterous tankmates stress them. They rarely dig and leave plants alone, but need a mature tank with clean water.',
+    72, 80, 6.0, 7.5, NULL, 1),
+
+  ('Checkerboard Cichlid', 'Dicrossus filamentosus', 'Advanced', 2.75, 0.01995, 3.01, 20, NULL, NULL, false, 'peaceful',
+    'Checkerboard cichlids need warm, very soft, acidic water, and their eggs will not hatch above about pH 5.8. They are shy and do best in a dim, heavily planted tank with calm tankmates. Keep 1 male with 2-3 females.',
+    77, 84, 5.0, 6.5, NULL, 1.45),
+
+  ('Golden Dwarf Cichlid', 'Nannacara anomala', 'Beginner', 2.5, 0.01445, 3.08, 20, NULL, NULL, false, 'peaceful',
+    'Golden dwarf cichlids are peaceful, but a female guarding fry will attack fish much bigger than her. Keep 1 male with 2 or more females, giving each female about 16 by 16 inches of floor space. Males grow much bigger than females.',
+    72, 81, 6.0, 7.5, NULL, 2.4),
+
+  ('Flag Cichlid', 'Laetacara curviceps', 'Beginner', 2.75, 0.02138, 3.05, 20, NULL, NULL, false, 'peaceful',
+    'Flag cichlids do best as a single male and female pair, so buy a pair that has already formed if you can. Growing up a group to let a pair form only works in a big tank, since the pair can turn on the others. Both parents guard the eggs and fry and get territorial while breeding, and they like plants, leaf litter, and gentle flow.',
+    72, 79, 5.5, 7.5, NULL, 2),
+
+  ('Red Breasted Acara', 'Laetacara dorsigera', 'Beginner', 3.0, 0.03020, 3.05, 30, NULL, NULL, false, 'peaceful',
+    'Red breasted acaras do best as a single pair, but males can be rough with females, so give plenty of plants and wood where she can hide. Both sexes only show the red breast and cheeks when breeding, and they are often sold mislabeled as flag cichlids. They are known to jump, so a lid helps.',
+    68, 79, 5.0, 7.5, NULL, 1.5),
+
+  -- West African dwarf cichlids
+  ('African Butterfly Cichlid', 'Anomalochromis thomasi', 'Beginner', 2.75, 0.01445, 2.99, 30, NULL, NULL, false, 'peaceful',
+    'African butterfly cichlids are shy and peaceful, and do well as a pair or a small group in a 30 gallon or bigger. Avoid fast, pushy tankmates, since they are shy. They need flat stones or broad leaves to spawn on, and a breeding pair digs small pits in the sand and guards the area around it.',
+    73, 81, 6.0, 7.5, NULL, 1.95),
+
+  -- Shell dwellers
+  ('Multie Shell Dweller', 'Neolamprologus multifasciatus', 'Beginner', 1.5, 0.01862, 3.02, 10, NULL, NULL, false, 'semi-aggressive',
+    'Multies live in empty snail shells, so give them at least 2-3 shells per fish on at least 2 inches of sand. They need hard, alkaline water, which rules out most community fish. They defend their shells against much bigger fish, and floor space matters more than gallons.',
+    75, 81, 7.5, 9.0, NULL, 1.3),
+
+  ('Similis Shell Dweller', 'Neolamprologus similis', 'Beginner', 1.75, 0.00389, 3.12, 10, NULL, NULL, false, 'semi-aggressive',
+    'Similis live in empty snail shells, so give them at least 2-3 shells per fish on open, fine sand. They need hard, alkaline water, which rules out most soft-water fish. They defend their shell hard enough to nip hands, so keep more females than males to cut down on fighting.',
+    75, 81, 7.5, 9.0, NULL, 2.2),
+
+  ('Ocellatus Shell Dweller', 'Neolamprologus ocellatus', 'Beginner', 2.0, 0.01862, 3.02, 20, NULL, NULL, false, 'semi-aggressive',
+    'Ocellatus live in empty snail shells and bury them, so give them at least 2-3 shells per fish on at least 2 inches of sand. They are more aggressive than other common shell dwellers and may attack them, so keep them as the only kind of shell dweller in the tank. They need hard, alkaline water and more females than males.',
+    73, 81, 7.5, 9.0, NULL, 1.6),
+
+  ('Gold Ocellatus Shell Dweller', 'Neolamprologus ocellatus (Gold)', 'Beginner', 2.0, 0.01862, 3.02, 20, NULL, NULL, false, 'semi-aggressive',
+    'Gold ocellatus are a popular gold form of the ocellatus shell dweller and just as feisty, so keep them as the only kind of shell dweller in the tank. Give them at least 2-3 shells per fish on at least 2 inches of sand, and hard, alkaline water. Males grow much bigger than females, so keep more females than males.',
+    73, 81, 7.5, 9.0, NULL, 1.6);
+
+
+	
 
 -- ============================================
 -- TEMPLATE: copy this to add a new fish

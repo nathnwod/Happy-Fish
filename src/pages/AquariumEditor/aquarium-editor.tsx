@@ -598,17 +598,14 @@ export default function AquariumEditor() {
                     <div className="current-fish-selection-section">
                         <div className="fish-list-header">
                             <h3 className="current-fish-selection-section-title">Your Fish:</h3>
-
-                            <div className='current-tank-info-cards'>
-                                <span className="fish-count">{totalFish} fish</span>
-                                <span className="species-count">{totalSpecies} species</span>
-                                <span className="tank-size-count">{tankGallons} gallon tank</span>
-                            </div>
-
                         </div>
 
+                        <div className='current-tank-info-cards'>
+                            <span className="fish-count">{totalFish} fish</span>
+                            <span className="species-count">{totalSpecies} species</span>
+                            <span className="tank-size-count">{tankGallons} gallon tank</span>
+                        </div>
                         
-
                        {selectedFishList.length === 0 && (
                             <div className="fish-list-empty">
                                 <h4 className="fish-list-empty-text">No fish yet</h4>
@@ -643,8 +640,6 @@ export default function AquariumEditor() {
                                                     <div className={`skill-level skill-${fish.skill_level.toLowerCase()}`}>
                                                         <h4>{fish.skill_level}</h4>
                                                     </div>
-                                                    
-                                                 
                                                 
                                                 </div>
 
@@ -678,6 +673,8 @@ export default function AquariumEditor() {
                                                     <span className="fish-stat-label">Temperament:</span>
                                                     <span className="fish-stat-value">{fish.temperament}</span>
                                                 </span>
+
+
                                             </div>
 
                                         </div>
