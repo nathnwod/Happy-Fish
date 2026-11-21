@@ -63,7 +63,8 @@ const bottomGenera = [
   'Baryancistrus', 'Leporacanthicus', 'Scobinancistrus', 'Pterygoplichthys', 
   'Panaque', 'Parotocinclus', 'Otocinclus', 'Pangio', 
   'Mikrogeophagus', 'Apistogramma', 'Pelvicachromis', 'Dicrossus',
-  'Nannacara', 'Neolamprologus', 'Anomalochromis'
+  'Nannacara', 'Neolamprologus', 'Anomalochromis', 'Geophagus', 
+  'Satanoperca', 'Gymnogeophagus', 'Biotodoma'
 ]
 const topGenera = [
   'Trichogaster', 'Trichopodus', 'Trichopsis', 'Sphaerichthys', 
@@ -75,9 +76,10 @@ const topGenera = [
 // Dwarf cichlids claim floor territory, and a tank's floor grows slower than its gallons
 // (a 75 has 3.75x the water of a 20 but only about 2.4x the floor).
 // Above 20 gallons, each one counts a bit more so big tanks don't fit too many.
-const floorTerritoryGenera = ['Mikrogeophagus', 'Apistogramma', 'Pelvicachromis', 'Dicrossus', 'Nannacara', 'Laetacara']
-function floorTerritoryFactor(genus: string, tankGallons: number) {
-  if (!floorTerritoryGenera.includes(genus) || tankGallons <= 20) {
+// Fish 5" and up (acaras) roam the whole tank, so they skip this.
+const floorTerritoryGenera = ['Mikrogeophagus', 'Apistogramma', 'Pelvicachromis', 'Dicrossus', 'Nannacara', 'Laetacara', 'Andinoacara']
+function floorTerritoryFactor(genus: string, tankGallons: number, sizeInches: number) {
+  if (!floorTerritoryGenera.includes(genus) || tankGallons <= 20 || sizeInches >= 5) {
     return 1
   }
   return (tankGallons / 20) ** 0.5
@@ -100,8 +102,7 @@ export function calculateTotalWasteScore(
   
   for (const fish of fishList) {
     const genus = fish.scientific_name.split(' ')[0]
-    const fishScore = oneFishScore(fish, tankGallons, fish.waste_multiplier) * floorTerritoryFactor(genus, tankGallons)
-
+    const fishScore = oneFishScore(fish, tankGallons, fish.waste_multiplier) * floorTerritoryFactor(genus, tankGallons, fish.adult_size_inches)
     if (floorTerritoryGenera.includes(genus)) {
       cichlid += fishScore * fish.quantity
     } else if (bottomGenera.includes(genus)) {
