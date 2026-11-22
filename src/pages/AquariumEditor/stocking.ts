@@ -76,10 +76,13 @@ const topGenera = [
 // Dwarf cichlids claim floor territory, and a tank's floor grows slower than its gallons
 // (a 75 has 3.75x the water of a 20 but only about 2.4x the floor).
 // Above 20 gallons, each one counts a bit more so big tanks don't fit too many.
-// Fish 5" and up (acaras) roam the whole tank, so they skip this.
-const floorTerritoryGenera = ['Mikrogeophagus', 'Apistogramma', 'Pelvicachromis', 'Dicrossus', 'Nannacara', 'Laetacara', 'Andinoacara']
+// Bigger cichlids (4" and up, like angelfish, severums, blue acaras and Central Americans) share the cichlid zone
+// but roam the whole tank, so they skip this.
+// Discus, oscars, port acaras, chocolates, keyholes and pike cichlids stay in the middle zone,
+// since their community tanks matched hobbyist stocking there.
+const floorTerritoryGenera = ['Mikrogeophagus', 'Apistogramma', 'Pelvicachromis', 'Dicrossus', 'Nannacara', 'Laetacara', 'Andinoacara', 'Pterophyllum', 'Mesonauta', 'Acarichthys', 'Heros', 'Uaru', 'Amatitlania', 'Thorichthys', 'Rocio', 'Trichromis', 'Herotilapia', 'Herichthys', 'Amphilophus', 'Parachromis', 'Hypsophrys', 'Cryptoheros', 'Vieja']
 function floorTerritoryFactor(genus: string, tankGallons: number, sizeInches: number) {
-  if (!floorTerritoryGenera.includes(genus) || tankGallons <= 20 || sizeInches >= 5) {
+  if (!floorTerritoryGenera.includes(genus) || tankGallons <= 20 || sizeInches >= 4) {
     return 1
   }
   return (tankGallons / 20) ** 0.5
@@ -94,7 +97,7 @@ export function calculateTotalWasteScore(
   let bottom = 0
   let middle = 0
   let top = 0
-  // Dwarf cichlids get their own zone, since corys and plecos don't fight them for caves
+  // Cichlids get their own zone, since corys and plecos don't fight them for caves
   let cichlid = 0
   // The biggest discount any one territorial fish could get
   let biggestDiscount = 0

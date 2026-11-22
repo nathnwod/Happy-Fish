@@ -308,8 +308,10 @@ export function getSuggestedFlowRate(
     selectedFishList: {waste_multiplier: number, adult_size_inches: number}[], 
     tankGallons: number)
     {
-    // Messy = high waste AND at least 4 inches, so tiny fish like pygmy corys don't count
-    const hasMessyFish = selectedFishList.some((fish) => fish.waste_multiplier >= 1.45 && fish.adult_size_inches >= 4)
+    // Messy = big fish (8"+), or high waste AND at least 4 inches, so tiny fish like pygmy corys don't count
+    const hasMessyFish = 
+    selectedFishList.some((fish) => fish.adult_size_inches >= 8 || 
+    (fish.waste_multiplier >= 1.45 && fish.adult_size_inches >= 4))
 
     // Start at 4x, add 1x for every 50% stocked, max 10x
     let turnover = 4 + stockingPercentage / 50

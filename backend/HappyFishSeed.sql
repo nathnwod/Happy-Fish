@@ -383,7 +383,7 @@ VALUES
 
   ('Cardinal Tetra', 'Paracheirodon axelrodi', 'Intermediate', 1.75, 0.01122, 3.08, 20, 6, NULL, false, 'peaceful',
     'Cardinal tetras are sensitive to water changes and are often wild caught. Best added to an established tank.',
-    74, 82, 4, 7, NULL, 1),
+    74, 84, 4, 7, NULL, 1),
 
   ('Head and Tail Light Tetra', 'Holopristis ocellifera', 'Beginner', 1.75, 0.01096, 3.08, 20, 6, NULL, false, 'peaceful',
     'Head and tail light tetras are hardy and a good choice for a first community tank.',
@@ -444,11 +444,11 @@ VALUES
 
   ('Diamond Tetra', 'Makunaima pittieri', 'Beginner', 2.5, 0.01995, 3.01, 20, 6, NULL, false, 'peaceful',
     'Diamond tetras look plain when young and develop their sparkle as adults. Avoid long-finned tankmates.',
-    75, 82, 5.5, 7.0, NULL, 1),
+    75, 82, 5.5, 7.0, NULL, 0.75),
 
   ('Bleeding Heart Tetra', 'Megalamphodus erythrostigma', 'Intermediate', 2.75, 0.01995, 3.01, 20, 6, NULL, false, 'peaceful',
     'Bleeding heart tetras need a mature tank with very clean water. They may nip long-finned fish like guppies.',
-    72, 82, 5.5, 7.0, NULL, 1),
+    72, 82, 5.5, 7.0, NULL, 0.8),
 
   ('Buenos Aires Tetra', 'Psalidodon anisitsi', 'Beginner', 2.75, 0.01349, 3.09, 30, 8, NULL, false, 'semi-aggressive',
     'Buenos Aires tetras eat soft plants and can nip fins in small groups. Tough plants like anubias and java fern hold up best.',
@@ -1205,172 +1205,353 @@ VALUES
 
 
 
+
+
+
+
 -- SOUTH AMERICAN CICHLIDS --
 
 INSERT INTO species (name, scientific_name, skill_level, adult_size_inches, weight_a, weight_b, min_tank_gallons, min_group_size, max_group_size, avoid_pair, temperament, care_note, min_temp, max_temp, min_ph, max_ph, eats_fish_under_inches, waste_multiplier)
 VALUES
-  -- Angelfish and discus
+  -- Angelfish
   ('Angelfish', 'Pterophyllum scalare', 'Intermediate', 5, 0.03236, 2.98, 30, NULL, NULL, false, 'semi-aggressive',
     'Angelfish grow tall, so a tall tank works best. Their long fins attract fin nippers, and pairs get territorial when breeding.',
     75, 86, 6.0, 7.5, 2, 1),
 
-  ('Discus', 'Symphysodon aequifasciatus', 'Advanced', 6, 0.02692, 3.03, 75, 6, NULL, NULL, 'peaceful',
-    'Discus need very clean water. Keepers do large, frequent water changes.',
-    82, 86, 6.0, 7.0, NULL, 0.75),
+  ('Koi Angelfish', 'Pterophyllum scalare (Koi)', 'Intermediate', 5, 0.03236, 2.98, 30, NULL, NULL, false, 'semi-aggressive',
+    'Koi angelfish are a bred form with orange, black and white patches, and need the same care as other angelfish. They grow tall, so a tall tank works best, and they eat fish small enough to swallow, like neons. Their long fins attract fin nippers, so skip tiger barbs and similar fish.',
+    75, 86, 6.0, 7.5, 2, 1),
+
+  ('Platinum Angelfish', 'Pterophyllum scalare (Platinum)', 'Intermediate', 5, 0.03236, 2.98, 30, NULL, NULL, false, 'semi-aggressive',
+    'Platinum angelfish are a bred all-white form with no stripes, and need the same care as other angelfish. They grow tall, so a tall tank works best, and they eat fish small enough to swallow, like neons. Their long fins attract fin nippers, so skip tiger barbs and similar fish.',
+    75, 86, 6.0, 7.5, 2, 1),
+
+  ('Marble Angelfish', 'Pterophyllum scalare (Marble)', 'Intermediate', 5, 0.03236, 2.98, 30, NULL, NULL, false, 'semi-aggressive',
+    'Marble angelfish are a bred form with a swirled black and white pattern, and need the same care as other angelfish. They grow tall, so a tall tank works best, and they eat fish small enough to swallow, like neons. Their long fins attract fin nippers, so skip tiger barbs and similar fish.',
+    75, 86, 6.0, 7.5, 2, 1),
+
+  ('Black Angelfish', 'Pterophyllum scalare (Black)', 'Intermediate', 5, 0.03236, 2.98, 30, NULL, NULL, false, 'semi-aggressive',
+    'Black angelfish are a bred solid black form, and need the same care as other angelfish. They grow tall, so a tall tank works best, and they eat fish small enough to swallow, like neons. Their long fins attract fin nippers, so skip tiger barbs and similar fish.',
+    75, 86, 6.0, 7.5, 2, 1),
+
+  ('Zebra Angelfish', 'Pterophyllum scalare (Zebra)', 'Intermediate', 5, 0.03236, 2.98, 30, NULL, NULL, false, 'semi-aggressive',
+    'Zebra angelfish are a bred form with extra black stripes, and need the same care as other angelfish. They grow tall, so a tall tank works best, and they eat fish small enough to swallow, like neons. Their long fins attract fin nippers, so skip tiger barbs and similar fish.',
+    75, 86, 6.0, 7.5, 2, 1),
+
+  ('Gold Angelfish', 'Pterophyllum scalare (Gold)', 'Intermediate', 5, 0.03236, 2.98, 30, NULL, NULL, false, 'semi-aggressive',
+    'Gold angelfish are a bred gold-yellow form with no stripes, and need the same care as other angelfish. They grow tall, so a tall tank works best, and they eat fish small enough to swallow, like neons. Their long fins attract fin nippers, so skip tiger barbs and similar fish.',
+    75, 86, 6.0, 7.5, 2, 1),
+
+  ('Leopard Angelfish', 'Pterophyllum scalare (Leopard)', 'Intermediate', 5, 0.03236, 2.98, 30, NULL, NULL, false, 'semi-aggressive',
+    'Leopard angelfish are a bred form covered in dark spots, and need the same care as other angelfish. They grow tall, so a tall tank works best, and they eat fish small enough to swallow, like neons. Their long fins attract fin nippers, so skip tiger barbs and similar fish.',
+    75, 86, 6.0, 7.5, 2, 1),
+
+  ('Smokey Angelfish', 'Pterophyllum scalare (Smokey)', 'Intermediate', 5, 0.03236, 2.98, 30, NULL, NULL, false, 'semi-aggressive',
+    'Smokey angelfish are a bred form with a dark brown back half, and need the same care as other angelfish. They grow tall, so a tall tank works best, and they eat fish small enough to swallow, like neons. Their long fins attract fin nippers, so skip tiger barbs and similar fish.',
+    75, 86, 6.0, 7.5, 2, 1),
+
+  ('Leopold''s Angelfish', 'Pterophyllum leopoldi', 'Intermediate', 4.5, 0.02692, 3.03, 55, 4, NULL, false, 'semi-aggressive',
+    'Leopold''s angelfish are the smallest angelfish, but they still grow tall, so a tall tank works best. Keep a group of 4 or more, since they can be rough on their own kind and a group spreads out the bullying. They do best in soft, acidic water with low nitrates, so plan on regular water changes.',
+    72, 84, 5.0, 7.0, 1, 1.1),
+
+	UPDATE species SET waste_multiplier = 1.1 WHERE name IN ('Angelfish', 'Koi Angelfish', 'Platinum Angelfish', 'Marble Angelfish', 'Black Angelfish', 'Zebra Angelfish', 'Gold Angelfish', 'Leopard Angelfish', 'Smokey Angelfish');
+	UPDATE species SET waste_multiplier = 1.3 WHERE name = 'Leopold''s Angelfish';
 
   ('Altum Angelfish', 'Pterophyllum altum', 'Advanced', 7.0, 0.02692, 3.03, 110, 4, NULL, false, 'semi-aggressive',
     'Altum angels grow 10-13 inches tall, so they need a tall tank, ideally 24 inches or more, and a standard 75 is too short. Keep them in a group, in very soft, acidic water at 82-88°F, which rules out most community fish. They eat fish small enough to fit in their mouth, like neons, and most are wild caught, so they may only take live or frozen foods at first.',
     82, 88, 5.0, 6.2, 2, 0.8),
 
-  -- Acaras, festivums and severums (6-8")
+  -- Discus
+  ('Discus', 'Symphysodon aequifasciatus', 'Advanced', 6, 0.02692, 3.03, 75, 6, NULL, NULL, 'peaceful',
+    'Discus need very clean water. Keepers do large, frequent water changes.',
+    82, 86, 6.0, 7.0, NULL, 0.75),
+
+  ('Pigeon Blood Discus', 'Symphysodon aequifasciatus (Pigeon Blood)', 'Advanced', 6, 0.02692, 3.03, 75, 6, NULL, NULL, 'peaceful',
+    'Pigeon blood discus are a bred orange-red form, often with fine black peppering, and need the same care as other discus. They need very clean, warm water, so plan on large, frequent water changes. Keep them in a group with calm tankmates that handle the heat.',
+    82, 86, 6.0, 7.0, NULL, 0.75),
+
+  ('Blue Diamond Discus', 'Symphysodon aequifasciatus (Blue Diamond)', 'Advanced', 6, 0.02692, 3.03, 75, 6, NULL, NULL, 'peaceful',
+    'Blue diamond discus are a bred solid blue form with no pattern, and need the same care as other discus. They need very clean, warm water, so plan on large, frequent water changes. Keep them in a group with calm tankmates that handle the heat.',
+    82, 86, 6.0, 7.0, NULL, 0.75),
+
+  ('Red Turquoise Discus', 'Symphysodon aequifasciatus (Red Turquoise)', 'Advanced', 6, 0.02692, 3.03, 75, 6, NULL, NULL, 'peaceful',
+    'Red turquoise discus are a bred form with red and turquoise stripes, and need the same care as other discus. They need very clean, warm water, so plan on large, frequent water changes. Keep them in a group with calm tankmates that handle the heat.',
+    82, 86, 6.0, 7.0, NULL, 0.75),
+
+  ('Snakeskin Discus', 'Symphysodon aequifasciatus (Snakeskin)', 'Advanced', 6, 0.02692, 3.03, 75, 6, NULL, NULL, 'peaceful',
+    'Snakeskin discus are a bred form with very fine, tightly packed lines, and need the same care as other discus. They need very clean, warm water, so plan on large, frequent water changes. Keep them in a group with calm tankmates that handle the heat.',
+    82, 86, 6.0, 7.0, NULL, 0.75),
+
+  ('Checkerboard Discus', 'Symphysodon aequifasciatus (Checkerboard)', 'Advanced', 6, 0.02692, 3.03, 75, 6, NULL, NULL, 'peaceful',
+    'Checkerboard discus are a bred form with a checkered pattern of crossing lines, and need the same care as other discus. They need very clean, warm water, so plan on large, frequent water changes. Keep them in a group with calm tankmates that handle the heat.',
+    82, 86, 6.0, 7.0, NULL, 0.75),
+
+  ('Leopard Discus', 'Symphysodon aequifasciatus (Leopard)', 'Advanced', 6, 0.02692, 3.03, 75, 6, NULL, NULL, 'peaceful',
+    'Leopard discus are a bred form with red spots on a turquoise body, and need the same care as other discus. They need very clean, warm water, so plan on large, frequent water changes. Keep them in a group with calm tankmates that handle the heat.',
+    82, 86, 6.0, 7.0, NULL, 0.75),
+
+  ('Red Melon Discus', 'Symphysodon aequifasciatus (Red Melon)', 'Advanced', 6, 0.02692, 3.03, 75, 6, NULL, NULL, 'peaceful',
+    'Red melon discus are a bred solid red-orange form, and need the same care as other discus. They need very clean, warm water, so plan on large, frequent water changes. Keep them in a group with calm tankmates that handle the heat.',
+    82, 86, 6.0, 7.0, NULL, 0.75),
+
+  ('Albino Discus', 'Symphysodon aequifasciatus (Albino)', 'Advanced', 6, 0.02692, 3.03, 75, 6, NULL, NULL, 'peaceful',
+    'Albino discus are a bred form with a pale body and red eyes, and need the same care as other discus. They need very clean, warm water, so plan on large, frequent water changes. Keep them in a group with calm tankmates that handle the heat.',
+    82, 86, 6.0, 7.0, NULL, 0.75),
+
+  ('Heckel Discus', 'Symphysodon discus', 'Advanced', 6, 0.02692, 3.03, 75, 6, NULL, false, 'peaceful',
+    'Heckel discus are wild-type discus with a thick dark bar through the middle of the body, and are more delicate than regular discus, so they suit experienced keepers. They need very soft, acidic water that is warmer than most fish handle, plus large, frequent water changes. Keep them in a group with calm tankmates that handle the heat.',
+    82, 88, 5.0, 6.5, NULL, 0.75),
+
+  -- Acaras and festivums
   ('Blue Acara', 'Andinoacara pulcher', 'Beginner', 6.0, 0.03388, 3.07, 40, NULL, NULL, false, 'peaceful',
     'Blue acaras are peaceful for a cichlid this size, but they eat fish small enough to swallow. They are avid diggers, so rooted plants struggle, and tough plants like anubias and java fern hold up better. They are sensitive to dropping water quality, so strong filtration and regular water changes matter.',
-    72, 80, 6.5, 8.0, 1.5, 0.8),
+    72, 80, 6.5, 8.0, 1.5, 1.1),
+
+  ('Electric Blue Acara', 'Andinoacara pulcher (Electric Blue)', 'Beginner', 6.0, 0.03388, 3.07, 40, NULL, NULL, false, 'peaceful',
+    'Electric blue acaras are a bright bred form of the blue acara, and some lines carry genes from related acaras. They are fairly peaceful but eat fish small enough to swallow, and a spawning pair turns territorial. They dig, so tough plants like anubias and java fern hold up best.',
+    72, 80, 6.5, 8.0, 1.5, 1.1),
+
+  ('Port Acara', 'Cichlasoma portalegrense', 'Beginner', 5.0, 0.02138, 3.05, 40, NULL, NULL, false, 'semi-aggressive',
+    'Port acaras do best in cooler water than most South American cichlids, so pick tankmates that handle it. Once a pair forms, they bully other port acaras and claim the floor when breeding, so buy an already-formed pair rather than a group, and use rocks and wood to break up sight lines. They eat fish small enough to swallow, so skip tiny tetras.',
+    66, 75, 6.0, 7.5, 1, 1.6),
 
   ('Festivum', 'Mesonauta festivus', 'Intermediate', 6.0, 0.03388, 3.09, 55, 4, NULL, false, 'peaceful',
-    'Festivums are social and do poorly alone, so keep a group of 4 or more, and give a group more than 55 gallons if you can. They bully small fish, so skip small tetras like neons. Breeding pairs get territorial, so give them a planted tank with calm water.',
+    'Festivums are social and do poorly alone, so keep a group of 4 or more. They bully small fish, so skip small tetras like neons. Breeding pairs get territorial, so give them a planted tank with calm water.',
     75, 82, 6.0, 7.5, NULL, 0.7),
 
+  ('Threadfin Acara', 'Acarichthys heckelii', 'Intermediate', 8.0, 0.02951, 2.97, 75, NULL, NULL, false, 'peaceful',
+    'Threadfin acaras dig constantly and move gravel and decor around, so use soft sand. They are peaceful with other fish, but some adults suddenly turn very aggressive toward their own kind and can kill weaker ones, so any group is a risk, and plenty of rocks and caves give weaker fish a place to escape. They are sensitive to water quality, so only add them to a mature tank.',
+    75, 86, 6.0, 8.0, 1, 1.4),
+
+  -- Severums
   ('Severum', 'Heros efasciatus', 'Beginner', 8.0, 0.03631, 3.11, 55, NULL, NULL, false, 'semi-aggressive',
-    'Severums are calm for their size, but they eat fish small enough to swallow, so skip tiny tetras. In smaller tanks a single fish or a pair is safest, since a pair gets territorial when spawning, while big tanks can hold a group, which keeps any one fish from turning mean. They are mostly plant eaters, so feed plenty of vegetable foods like peas, spinach, or spirulina.',
+    'Severums are calm for their size, but they eat fish small enough to swallow, so skip tiny tetras. A pair gets territorial when spawning, so use rocks and wood to break up sight lines. They are mostly plant eaters, so feed plenty of vegetable foods like peas, spinach, or spirulina.',
     72, 84, 5.5, 7.5, 1.5, 0.75),
 
-  -- Eartheaters (9"+)
+  ('Gold Severum', 'Heros efasciatus (Gold)', 'Beginner', 8.0, 0.03631, 3.11, 55, NULL, NULL, false, 'semi-aggressive',
+    'Gold severums are a bred yellow-gold form of the severum with the same needs, and foods rich in carotenoids keep the gold color bright. They eat fish small enough to swallow, so skip tiny tetras, and they are mostly plant eaters that need plenty of vegetable foods. A pair gets territorial when spawning, so use rocks and wood to break up sight lines.',
+    72, 84, 5.5, 7.5, 1.5, 0.75),
+
+  ('Super Red Severum', 'Heros efasciatus (Super Red)', 'Beginner', 8.0, 0.03631, 3.11, 55, NULL, NULL, false, 'semi-aggressive',
+    'Super red severums are a bred red-orange form of the severum with the same needs, and foods rich in carotenoids keep the red color bright. They eat fish small enough to swallow, so skip tiny tetras, and they are mostly plant eaters that need plenty of vegetable foods. A pair gets territorial when spawning, so use rocks and wood to break up sight lines.',
+    72, 84, 5.5, 7.5, 1.5, 0.75),
+
+  ('Rotkeil Severum', 'Heros efasciatus (Rotkeil)', 'Beginner', 8.0, 0.03631, 3.11, 55, NULL, NULL, false, 'semi-aggressive',
+    'Rotkeil severums are a wild form of the severum with red spots on the head, and need the same care. They eat fish small enough to swallow, so skip tiny tetras, and they are mostly plant eaters that need plenty of vegetable foods. A pair gets territorial when spawning, so use rocks and wood to break up sight lines.',
+    72, 84, 5.5, 7.5, 1.5, 0.75),
+
+  ('Spotted Severum', 'Heros notatus', 'Intermediate', 10.0, 0.03802, 3.06, 55, NULL, NULL, false, 'semi-aggressive',
+    'Spotted severums grow larger than the common severum, and they eat fish small enough to swallow, so skip small tetras. They like to dig, so use sand and tough plants, and males may squabble with each other. They need vegetable matter as well as meaty foods, and do best in soft, acidic water.',
+    72, 84, 6.0, 7.0, 2, 0.9),
+
+  -- Eartheaters
+  ('Cupid Cichlid', 'Biotodoma cupido', 'Intermediate', 5.0, 0.01950, 3.06, 75, 5, NULL, false, 'peaceful',
+    'Cupid cichlids sift sand for food, so soft sand is a must. Keep a group of 5 or more, since weaker fish get bullied and the group turns nervous in small numbers, and skip territorial or aggressive tankmates. They need soft water and are very sensitive to water quality, so only add them to a mature tank.',
+    68, 86, 5.0, 7.0, NULL, 1.3),
+
+  ('Red Head Tapajos', 'Geophagus sp. Tapajos', 'Intermediate', 6.0, 0.02344, 3.01, 75, 5, NULL, false, 'peaceful',
+    'Red head Tapajos sift sand for food, so soft sand is a must. They are a group fish, so keep 5 or more, and skip aggressive bottom-dwelling cichlids. They are sensitive to rising nitrates, so only add them to a mature tank and plan on frequent water changes.',
+    79, 84, 6.0, 7.0, NULL, 1.0),
+
+  ('Leucosticta Eartheater', 'Satanoperca leucosticta', 'Intermediate', 7.5, 0.02344, 3.01, 125, 5, NULL, false, 'peaceful',
+    'Leucosticta eartheaters sift sand for food, so soft sand is a must, since gravel can damage their gills. Keep a group of 5 or more, since weaker fish get picked on in small groups, and skip aggressive bottom-dwelling cichlids. They are very sensitive to water quality, so only add them to a mature tank, and they are often sold as jurupari.',
+    68, 82, 5.5, 7.5, NULL, 1.2),
+
+  ('Red Hump Eartheater', 'Geophagus steindachneri', 'Intermediate', 7.75, 0.02399, 3.03, 75, NULL, NULL, false, 'semi-aggressive',
+    'Red hump males fight each other, so keep at least 3 females for every male to spread out his chasing, and buy adults since only males grow the red hump. They sift sand for food, so soft sand is a must, and they get territorial when breeding, so skip other bottom-dwelling cichlids. They are sensitive to water quality, so only add them to a mature tank.',
+    68, 86, 6.0, 7.5, NULL, 1.0),
+
+  ('Sveni Eartheater', 'Geophagus sveni', 'Intermediate', 8.0, 0.02344, 3.01, 75, 5, NULL, false, 'peaceful',
+    'Sveni eartheaters sift sand for food, so soft sand is a must. They are a group fish, so keep 5 or more, and skip aggressive bottom-dwelling cichlids. Breeding pairs guard their spot and chase tankmates, so use rocks and wood to break up sight lines.',
+    76, 84, 6.0, 7.5, NULL, 0.8),
+
+  ('Paraguay Eartheater', 'Gymnogeophagus balzanii', 'Advanced', 8.0, 0.02344, 3.01, 40, NULL, NULL, false, 'semi-aggressive',
+    'Paraguay eartheaters, also sold as balzani or Argentine humpheads, need cooler water than most South American cichlids, plus a few months each year at about 60-64°F to stay healthy long term, so pick tankmates that handle cool water. Males are very quarrelsome, so keep at least 2 females for every male. They sift sand and uproot plants, so use soft sand and sinking foods.',
+    70, 77, 6.5, 7.5, NULL, 0.85),
+
   ('Demon Eartheater', 'Satanoperca jurupari', 'Intermediate', 9.0, 0.02399, 3.05, 125, 5, NULL, false, 'peaceful',
     'Demon eartheaters sift sand for food, so soft sand is a must. They live in groups in the wild, so keep 5 or more, and skip aggressive bottom-dwelling cichlids. They are sensitive to waste, so plan on large weekly water changes, and know that many fish sold as jurupari are actually Satanoperca leucosticta.',
     72, 82, 5.5, 7.5, NULL, 0.8),
 
+  ('Geophagus Winemilleri', 'Geophagus winemilleri', 'Intermediate', 10.0, 0.02291, 3.05, 125, 5, NULL, false, 'peaceful',
+    'Winemilleri grow about 10 inches and sift sand for food, so soft sand is a must, and coarse gravel is a bad fit. Keep a group of 5 or more, since weaker fish get picked on in small groups, and skip aggressive bottom-dwelling cichlids. They are very sensitive to water quality, so only add them to a mature tank and plan on large weekly water changes.',
+    79, 86, 5.0, 7.0, NULL, 0.8),
+
   ('Geophagus Altifrons', 'Geophagus altifrons', 'Intermediate', 11.0, 0.01905, 2.99, 125, 5, NULL, false, 'peaceful',
-    'Altifrons grow about 11 inches, so a group of 5 or more fills a 125 fast and does best in 180 gallons or more. They sift sand for food, so soft sand is a must, since gravel stops them from feeding properly. They need soft, acidic water and are sensitive to waste, so plan on large weekly water changes.',
+    'Altifrons grow about 11 inches, so a group of 5 or more needs a very large tank. They sift sand for food, so soft sand is a must, since gravel stops them from feeding properly. They need soft, acidic water and are sensitive to waste, so plan on large weekly water changes.',
     79, 86, 5.0, 6.5, NULL, 0.7),
 
-  -- Large cichlids (10"+)
+  ('Pearl Cichlid', 'Geophagus brasiliensis', 'Intermediate', 11.0, 0.01905, 3.02, 75, NULL, NULL, false, 'semi-aggressive',
+    'Pearl cichlids grow 10-11 inches and are more territorial than most eartheaters, especially pairs guarding a breeding site, so skip other bottom-dwelling cichlids and use rocks and wood to break up sight lines. They eat very small fish and shrimp, so choose sturdy tankmates. They handle cooler water than most South American cichlids, but need strong filtration and large weekly water changes.',
+    64, 82, 6.0, 8.0, 1, 1.2),
+
+  -- Large cichlids
   ('Green Terror', 'Andinoacara rivulatus', 'Intermediate', 10.0, 0.02138, 3.05, 75, NULL, NULL, false, 'aggressive',
-    'Green terrors are one of the most aggressive South American cichlids, so keep a single fish or one mated pair unless the tank is enormous, since more of them usually means fighting. Their full temperament often does not show until they are about 3 years old, so a calm young fish can turn mean. Never keep a pair with other fish, and a single green terror should only share a very large tank with sturdy fish its own size or bigger.',
-    68, 75, 6.5, 8.0, 3, 0.7),
+    'Green terrors are one of the most aggressive South American cichlids and fight their own kind, so keeping more than a single fish or one mated pair is a risk in any tank. Their full temperament often does not show until they are about 3 years old, so a calm young fish can turn mean. Never keep a breeding pair with other fish, and a single green terror should only share a tank with sturdy fish its own size or bigger.',
+    68, 75, 6.5, 8.0, 3, 1.4),
 
   ('Uaru', 'Uaru amphiacanthoides', 'Intermediate', 10.0, 0.03467, 3.05, 75, 2, NULL, false, 'peaceful',
     'Uarus eat most aquatic plants, so plan an unplanted tank with sand and driftwood, and feed plenty of vegetable matter. They are peaceful and happiest in pairs or groups, and need warm water around 81-86°F. Wild fish need very soft, acidic water, while tank-bred fish are less fussy.',
     79, 86, 5.5, 7.0, NULL, 0.7),
 
   ('Chocolate Cichlid', 'Hypselecara temporalis', 'Intermediate', 10.0, 0.03467, 3.06, 75, NULL, NULL, false, 'peaceful',
-    'Chocolate cichlids grow 10-12 inches, so one fish needs at least 75 gallons, and a pair or a community tank needs about 120 or more. They are calm for their size and do well with other large, peaceful fish, but they will eat small fish. They need plant matter in their diet, not just meaty foods.',
+    'Chocolate cichlids grow 10-12 inches, so plan for a big tank from the start. They are calm for their size and do well with other large, peaceful fish, but they will eat small fish. They need plant matter in their diet, not just meaty foods.',
     77, 86, 5.0, 7.0, 1.5, 1.2),
 
   ('Oscar', 'Astronotus ocellatus', 'Intermediate', 12.0, 0.03162, 3.02, 75, NULL, NULL, false, 'semi-aggressive',
     'Oscars grow about a foot long and will eat any fish small enough to fit in their mouth, so tankmates must be large and sturdy. They dig, move decor around, and can break heaters, so use strong filtration, sturdy equipment, and weekly water changes. Two oscars need about 125 gallons or more, and some pairs still fight.',
-    72, 82, 6.0, 7.5, 4, 1.2);
+    72, 82, 6.0, 7.5, 4, 1.2),
 
-
-UPDATE species SET waste_multiplier = 1.1 WHERE name IN ('Blue Acara', 'Electric Blue Acara');
-UPDATE species SET waste_multiplier = 1.4 WHERE name = 'Green Terror';
-
-
-INSERT INTO species (name, scientific_name, skill_level, adult_size_inches, weight_a, weight_b, min_tank_gallons, min_group_size, max_group_size, avoid_pair, temperament, care_note, min_temp, max_temp, min_ph, max_ph, eats_fish_under_inches, waste_multiplier)
-VALUES
-  -- Oscar color forms
   ('Tiger Oscar', 'Astronotus ocellatus (Tiger)', 'Intermediate', 12.0, 0.03162, 3.02, 75, NULL, NULL, false, 'semi-aggressive',
-    'Tiger oscars are a common color form of the oscar with orange-red tiger markings, and need the same care. They grow about a foot long and eat any fish that fits in their mouth, so tankmates must be large and sturdy. Two oscars need about 125 gallons or more, and they dig and move decor, so use strong filtration and sturdy equipment.',
+    'Tiger oscars are a common color form of the oscar with orange-red tiger markings, and need the same care. They grow about a foot long and eat any fish that fits in their mouth, so tankmates must be large and sturdy. They make a lot of waste and dig and move decor, so use strong filtration and sturdy equipment.',
     72, 82, 6.0, 7.5, 4, 1.2),
 
   ('Albino Oscar', 'Astronotus ocellatus (Albino)', 'Intermediate', 12.0, 0.03162, 3.02, 75, NULL, NULL, false, 'semi-aggressive',
-    'Albino oscars are white with orange-red markings and red eyes, and need the same care as other oscars. They grow about a foot long and eat any fish that fits in their mouth, so tankmates must be large and sturdy. Two oscars need about 125 gallons or more, and they dig and move decor, so use strong filtration and sturdy equipment.',
+    'Albino oscars are white with orange-red markings and red eyes, and need the same care as other oscars. They grow about a foot long and eat any fish that fits in their mouth, so tankmates must be large and sturdy. They make a lot of waste and dig and move decor, so use strong filtration and sturdy equipment.',
     72, 82, 6.0, 7.5, 4, 1.2),
 
-  -- Severum and acara color forms
-  ('Gold Severum', 'Heros efasciatus (Gold)', 'Beginner', 8.0, 0.03631, 3.11, 55, NULL, NULL, false, 'semi-aggressive',
-    'Gold severums are a bred yellow-gold form of the severum with the same needs, and foods rich in carotenoids keep the gold color bright. They eat fish small enough to swallow, so skip tiny tetras, and they are mostly plant eaters that need plenty of vegetable foods. In smaller tanks a single fish or a pair is safest, since a pair gets territorial when spawning.',
-    72, 84, 5.5, 7.5, 1.5, 0.75),
+  ('Red Oscar', 'Astronotus ocellatus (Red)', 'Intermediate', 12.0, 0.03162, 3.02, 75, NULL, NULL, false, 'semi-aggressive',
+    'Red oscars are a bred form with mostly red-orange sides, and need the same care as other oscars. They grow about a foot long and eat any fish that fits in their mouth, so tankmates must be large and sturdy. They make a lot of waste and dig and move decor, so use strong filtration and sturdy equipment.',
+    72, 82, 6.0, 7.5, 4, 1.2),
 
-  ('Electric Blue Acara', 'Andinoacara pulcher (Electric Blue)', 'Beginner', 6.0, 0.03388, 3.07, 40, NULL, NULL, false, 'peaceful',
-    'Electric blue acaras are a bright bred form of the blue acara, and some lines carry genes from related acaras. They are fairly peaceful but eat fish small enough to swallow, and a spawning pair turns territorial. They dig, so tough plants like anubias and java fern hold up best.',
-    72, 80, 6.5, 8.0, 1.5, 0.8),
+  ('Lemon Oscar', 'Astronotus ocellatus (Lemon)', 'Intermediate', 12.0, 0.03162, 3.02, 75, NULL, NULL, false, 'semi-aggressive',
+    'Lemon oscars are a bred pale yellow form, and need the same care as other oscars. They grow about a foot long and eat any fish that fits in their mouth, so tankmates must be large and sturdy. They make a lot of waste and dig and move decor, so use strong filtration and sturdy equipment.',
+    72, 82, 6.0, 7.5, 4, 1.2),
 
-  -- Eartheaters
-  ('Leucosticta Eartheater', 'Satanoperca leucosticta', 'Intermediate', 7.5, 0.02344, 3.01, 125, 5, NULL, false, 'peaceful',
-    'Leucosticta eartheaters sift sand for food, so soft sand is a must, since gravel can damage their gills. Keep a group of 5 or more, since weaker fish get picked on in small groups, and skip aggressive bottom-dwelling cichlids. They are very sensitive to water quality, so only add them to a mature tank, and they are often sold as jurupari.',
-    68, 82, 5.5, 7.5, NULL, 1.2),
-
-	UPDATE species SET waste_multiplier = 1.2 WHERE name = 'Leucosticta Eartheater';
-
-  ('Red Hump Eartheater', 'Geophagus steindachneri', 'Intermediate', 7.75, 0.02399, 3.03, 75, NULL, NULL, false, 'semi-aggressive',
-    'Red hump males fight each other, so keep only 1 male per tank with 3 or more females to spread out his chasing. They sift sand for food, so soft sand is a must, and calm midwater fish like tetras make better tankmates than other territorial bottom dwellers. They are sensitive to water quality, so only add them to a mature tank.',
-    68, 86, 6.0, 7.5, NULL, 1.0),
-
-	UPDATE species SET care_note = 'Red hump males fight each other, so keep at least 3 females for every male to spread out his chasing, and buy adults since only males grow the red hump. They sift sand for food, so soft sand is a must, and they get territorial when breeding, so skip other bottom-dwelling cichlids. They are sensitive to water quality, so only add them to a mature tank.' WHERE name = 'Red Hump Eartheater';
-
-  ('Pearl Cichlid', 'Geophagus brasiliensis', 'Intermediate', 11.0, 0.01905, 3.02, 75, NULL, NULL, false, 'semi-aggressive',
-    'Pearl cichlids grow 10-11 inches and are more territorial than most eartheaters, so keep a single fish or one pair. They eat very small fish and shrimp, so choose sturdy tankmates. They handle cooler water than most South American cichlids, but need strong filtration and large weekly water changes.',
-    64, 82, 6.0, 8.0, 1, 1.2),
-
-	UPDATE species SET care_note = 'Pearl cichlids grow 10-11 inches and are more territorial than most eartheaters, especially pairs guarding a breeding site, so skip other bottom-dwelling cichlids and use rocks and wood to break up sight lines. They eat very small fish and shrimp, so choose sturdy tankmates. They handle cooler water than most South American cichlids, but need strong filtration and large weekly water changes.' WHERE name = 'Pearl Cichlid';
-
-  ('Paraguay Eartheater', 'Gymnogeophagus balzanii', 'Advanced', 8.0, 0.02344, 3.01, 40, NULL, NULL, false, 'semi-aggressive',
-    'Paraguay eartheaters, also sold as balzani or Argentine humpheads, need cooler water than most South American cichlids, plus a few months each year at about 60-64°F to stay healthy long term, so pick tankmates that handle cool water. Males are very quarrelsome, so keep 1 male with 2-6 females. They sift sand and uproot plants, so use soft sand and sinking foods.',
-    70, 77, 6.5, 7.5, NULL, 0.85),
-
-  -- Other South American cichlids
-  ('Threadfin Acara', 'Acarichthys heckelii', 'Intermediate', 8.0, 0.02951, 2.97, 75, NULL, NULL, false, 'peaceful',
-    'Threadfin acaras dig constantly and move gravel and decor around, so use soft sand. They are peaceful with other fish, but some adults suddenly turn very aggressive toward their own kind and can kill weaker ones, so a single fish or one pair is safest unless the tank is very large. They are sensitive to water quality, so only add them to a mature tank.',
-    75, 86, 6.0, 8.0, 1, 1.4),
+  -- Pike cichlids
+  ('Dwarf Pike Cichlid', 'Wallaciia compressiceps', 'Intermediate', 3.5, 0.00776, 3.12, 40, NULL, NULL, false, 'aggressive',
+    'Dwarf pike cichlids are predators that eat any fish up to about half their size, and can be very aggressive, so tankmates must be bigger and sturdy. They swim a lot and need more room than their size suggests, plus plenty of wood and leaves to hide in. They are sensitive to pollutants, so only add them to a mature tank.',
+    75, 81, 5.0, 6.8, 1.75, 6),
 
   ('Pike Cichlid', 'Crenicichla lepidota', 'Intermediate', 8.25, 0.00851, 3.08, 55, NULL, NULL, false, 'aggressive',
-    'Pike cichlids are predators that eat any fish they can swallow and bully fish their own size, so most keepers keep one alone. Tankmates must be similar in size or bigger, and a pike with tankmates needs about 100 gallons or more. Many different species are sold as pike cichlids, and some grow much bigger, so check the scientific name before buying.',
-    73, 82, 6.5, 7.5, 3, 3.5);
+    'Pike cichlids are predators that eat any fish they can swallow and bully fish their own size, so tankmates must be similar in size or bigger. They are even rougher on their own kind, so keeping more than one is a risk in any tank. Many different species are sold as pike cichlids, and some grow much bigger, so check the scientific name before buying.',
+    73, 82, 6.5, 7.5, 3, 3.5),
+
+  ('Ringtail Pike Cichlid', 'Crenicichla saxatilis', 'Intermediate', 10.0, 0.01318, 3.08, 75, NULL, NULL, false, 'aggressive',
+    'Ringtail pike cichlids are predators that eat any fish they can swallow, so tankmates must be similar in size or bigger. They fight their own kind, so keeping more than one is a risk in any tank, and caves or pipes help break up fights. They also eat shrimp, crabs and snails.',
+    77, 86, 6.5, 7.5, 3.5, 2.5);
 
 
-	-- New batch
-UPDATE species SET care_note = 'Pearl cichlids grow 10-11 inches and are more territorial than most eartheaters, especially pairs guarding a breeding site, so skip other bottom-dwelling cichlids and use rocks and wood to break up sight lines. They eat very small fish and shrimp, so choose sturdy tankmates. They handle cooler water than most South American cichlids, but need strong filtration and large weekly water changes.' WHERE name = 'Pearl Cichlid';
-
-UPDATE species SET care_note = 'Paraguay eartheaters, also sold as balzani or Argentine humpheads, need cooler water than most South American cichlids, plus a few months each year at about 60-64°F to stay healthy long term, so pick tankmates that handle cool water. Males are very quarrelsome, so keep at least 2 females for every male. They sift sand and uproot plants, so use soft sand and sinking foods.' WHERE name = 'Paraguay Eartheater';
-
-UPDATE species SET care_note = 'Threadfin acaras dig constantly and move gravel and decor around, so use soft sand. They are peaceful with other fish, but some adults suddenly turn very aggressive toward their own kind and can kill weaker ones, so any group is a risk, and plenty of rocks and caves give weaker fish a place to escape. They are sensitive to water quality, so only add them to a mature tank.' WHERE name = 'Threadfin Acara';
-
-UPDATE species SET care_note = 'Pike cichlids are predators that eat any fish they can swallow and bully fish their own size, so tankmates must be similar in size or bigger. They are even rougher on their own kind, so keeping more than one is a risk in any tank. Many different species are sold as pike cichlids, and some grow much bigger, so check the scientific name before buying.' WHERE name = 'Pike Cichlid';
-
-UPDATE species SET care_note = 'Tiger oscars are a common color form of the oscar with orange-red tiger markings, and need the same care. They grow about a foot long and eat any fish that fits in their mouth, so tankmates must be large and sturdy. They make a lot of waste and dig and move decor, so use strong filtration and sturdy equipment.' WHERE name = 'Tiger Oscar';
-
-UPDATE species SET care_note = 'Albino oscars are white with orange-red markings and red eyes, and need the same care as other oscars. They grow about a foot long and eat any fish that fits in their mouth, so tankmates must be large and sturdy. They make a lot of waste and dig and move decor, so use strong filtration and sturdy equipment.' WHERE name = 'Albino Oscar';
-
-UPDATE species SET care_note = 'Gold severums are a bred yellow-gold form of the severum with the same needs, and foods rich in carotenoids keep the gold color bright. They eat fish small enough to swallow, so skip tiny tetras, and they are mostly plant eaters that need plenty of vegetable foods. A pair gets territorial when spawning, so use rocks and wood to break up sight lines.' WHERE name = 'Gold Severum';
-
--- Older SA fish with the same problem
-UPDATE species SET care_note = 'Severums are calm for their size, but they eat fish small enough to swallow, so skip tiny tetras. A pair gets territorial when spawning, so use rocks and wood to break up sight lines. They are mostly plant eaters, so feed plenty of vegetable foods like peas, spinach, or spirulina.' WHERE name = 'Severum';
-
-UPDATE species SET care_note = 'Green terrors are one of the most aggressive South American cichlids and fight their own kind, so keeping more than a single fish or one mated pair is a risk in any tank. Their full temperament often does not show until they are about 3 years old, so a calm young fish can turn mean. Never keep a breeding pair with other fish, and a single green terror should only share a tank with sturdy fish its own size or bigger.' WHERE name = 'Green Terror';
-
-UPDATE species SET care_note = 'Chocolate cichlids grow 10-12 inches, so plan for a big tank from the start. They are calm for their size and do well with other large, peaceful fish, but they will eat small fish. They need plant matter in their diet, not just meaty foods.' WHERE name = 'Chocolate Cichlid';
-
-UPDATE species SET care_note = 'Altifrons grow about 11 inches, so a group of 5 or more needs a very large tank. They sift sand for food, so soft sand is a must, since gravel stops them from feeding properly. They need soft, acidic water and are sensitive to waste, so plan on large weekly water changes.' WHERE name = 'Geophagus Altifrons';
-
-UPDATE species SET care_note = 'Festivums are social and do poorly alone, so keep a group of 4 or more. They bully small fish, so skip small tetras like neons. Breeding pairs get territorial, so give them a planted tank with calm water.' WHERE name = 'Festivum';
 
 
--- ============================================
--- TEMPLATE: copy this to add a new fish
--- ============================================
-
--- INSERT INTO species (name, scientific_name, skill_level, adult_size_inches, weight_a, weight_b, min_tank_gallons, min_group_size, max_group_size, avoid_pair, temperament, care_note, min_temp, max_temp, min_ph, max_ph, eats_fish_under_inches, waste_multiplier)
--- VALUES (
---   'Fish Name',          -- name
---   'Genus species',      -- scientific_name
---   'Beginner',           -- skill_level: Beginner / Intermediate / Advanced
---   2.0,                  -- adult_size_inches
---   0.01000,              -- weight_a (from FishBase)
---   3.00,                 -- weight_b (from FishBase)
---   10,                   -- min_tank_gallons
---   6,                    -- min_group_size (NULL if solo is fine)
---   NULL,                 -- max_group_size (NULL if no limit)
---   false,                -- avoid_pair: true only if 2 of them fight
---   'peaceful',           -- temperament: peaceful / semi-aggressive / aggressive
---   NULL,                 -- care_note (NULL if none)
---   72, 80,               -- min_temp, max_temp (°F)
---   6.5, 7.5,             -- min_ph, max_ph
---   NULL,                 -- eats_fish_under_inches (NULL if it doesn't eat fish)
---   1                     -- waste_multiplier (1 = normal, higher = messier)
--- );
 
 
+
+-- CENTRAL AMERICAN CICHLIDS --
+
+INSERT INTO species (name, scientific_name, skill_level, adult_size_inches, weight_a, weight_b, min_tank_gallons, min_group_size, max_group_size, avoid_pair, temperament, care_note, min_temp, max_temp, min_ph, max_ph, eats_fish_under_inches, waste_multiplier)
+VALUES
+  -- Smaller Central Americans (under 8")
+  ('Convict Cichlid', 'Amatitlania nigrofasciata', 'Beginner', 5.0, 0.02692, 3.03, 30, NULL, NULL, false, 'aggressive',
+    'Convicts breed easily and turn violent when they do, taking on fish several times their size, so tankmates must be sturdy. Once a pair forms, it drives other convicts out of its territory, so buy a pair rather than a mixed group. All-female groups are calmer, but two females can still pair up, lay eggs and turn on the rest, so give plenty of rocks, caves and flowerpots to break up sight lines. They dig and may uproot plants.',
+    75, 82, 6.5, 8.0, NULL, 1.5),
+
+  ('Honduran Red Point', 'Amatitlania siquia', 'Beginner', 4.5, 0.02692, 3.03, 30, NULL, NULL, false, 'semi-aggressive',
+    'Honduran red points can live as a pair or as one male with at least 3 females, but a breeding pair claims a territory and chases other fish, including other red points, so give every fish caves to retreat to. They are close relatives of convicts and act much the same, digging most when breeding. They like hard, alkaline water.',
+    75, 82, 7.0, 8.0, NULL, 1.7),
+
+  ('T-Bar Cichlid', 'Amatitlania sajica', 'Beginner', 4.5, 0.02692, 3.03, 30, NULL, NULL, false, 'semi-aggressive',
+    'T-bars pair easily, and a breeding pair gets fiercely territorial and digs pits around its cave. If you keep more than a pair, keep at least 3 females for every 2 males and give each pair its own cave, since mixed groups crowded together often fall apart. They do best in hard, alkaline water with good filtration and some current.',
+    73, 86, 7.0, 8.0, NULL, 1.7),
+
+  ('Blue-Eye Cichlid', 'Cryptoheros spilurus', 'Beginner', 4.5, 0.01445, 3.08, 30, NULL, 2, false, 'semi-aggressive',
+    'Blue-eye cichlids pair one male to one female and spawn in caves, so give them rocks or flowerpots, and a pair gets territorial while guarding eggs. They are calmer than most Central American cichlids, but still need tankmates that can hold their own. Unlike most Central Americans, they prefer softer, near-neutral water.',
+    75, 81, 6.5, 7.5, NULL, 2.3),
+
+  ('Rainbow Cichlid', 'Herotilapia multispinosa', 'Beginner', 5.0, 0.01445, 3.08, 30, NULL, NULL, false, 'peaceful',
+    'Rainbow cichlids are one of the calmest Central American cichlids and can share a tank with tetras, barbs and other peaceful fish. They form pairs and both parents defend a territory when breeding, so give them smooth rocks or slate to spawn on and plants for cover. They like hard, alkaline water and gentle flow.',
+    72, 82, 7.0, 8.0, NULL, 1.4),
+
+  ('Firemouth Cichlid', 'Thorichthys meeki', 'Beginner', 6.0, 0.02138, 3.05, 40, NULL, NULL, false, 'semi-aggressive',
+    'Firemouths are calm for a Central American cichlid until they breed, when a pair claims a territory and chases tankmates, so give them caves and rocks to break up sight lines. They may eat much smaller fish, so mid-sized tankmates like swordtails and mollies are safer than tiny tetras. Only add them to a mature tank, since water quality matters.',
+    75, 86, 6.5, 8.0, 1, 1.1),
+
+  ('Salvini Cichlid', 'Trichromis salvini', 'Intermediate', 6.0, 0.02042, 3.06, 55, NULL, 2, false, 'aggressive',
+    'Salvinis pair one male to one female, and once a pair forms it attacks every other Salvini, so buy an already-formed pair rather than a group. Adults put together often fight instead of pairing. They are very aggressive for their size and eat any fish that fits in their mouth, so only keep them with sturdy fish of similar size. Females usually have a dark spot on the dorsal fin.',
+    72, 79, 6.5, 8.0, 1.5, 2.3),
+
+  -- Large Central Americans (10"+)
+  ('Nicaragua Cichlid', 'Hypsophrys nicaraguensis', 'Intermediate', 10.0, 0.02138, 3.05, 55, NULL, 2, false, 'semi-aggressive',
+    'Nicaragua cichlids pair one male to one female and usually stay together for life, but unpaired adults fight hard, so buy an already-formed pair rather than a group. They are calm for their size, so avoid very aggressive tankmates and choose larger barbs, characins or plecos instead. They dig, especially when spawning, so attach tough plants like java fern and anubias to rocks or wood.',
+    73, 82, 7.0, 8.0, 1.5, 1.0),
+
+  ('Jack Dempsey', 'Rocio octofasciata', 'Intermediate', 10.0, 0.02692, 3.03, 55, NULL, NULL, false, 'aggressive',
+    'Jack Dempseys grow about 10 inches and turn aggressive toward their own kind as they mature, and two alone can be more aggressive than a group. If you keep more than one, keep one male with at least 3 females and use a big rock pile to break up territories. Tankmates must be too big to eat, and they dig and uproot plants, so use rocks, wood, and floating or attached plants.',
+    72, 86, 6.5, 8.0, 2.5, 1.2),
+
+  ('Texas Cichlid', 'Herichthys cyanoguttatus', 'Intermediate', 12.0, 0.01445, 3.08, 75, NULL, 2, false, 'aggressive',
+    'Texas cichlids are highly territorial, and males often kill females they are not paired with, so buy an already-formed pair rather than putting adults together. A spawning pair will attack and often kill tankmates. They dig constantly, so skip rooted plants and use sand with heavy rocks, wood or flowerpots that cannot be toppled.',
+    68, 82, 6.5, 7.5, 2, 1.8),
+
+  ('Green Texas Cichlid', 'Herichthys carpintis', 'Intermediate', 12.0, 0.01445, 3.08, 75, NULL, 2, false, 'aggressive',
+    'Green Texas cichlids pair one male to one female, and a male may turn on his female while spawning, so buy an already-formed pair and give her caves and rocks to hide behind. They see small fish as food and dig constantly, so choose large, sturdy tankmates and skip rooted plants. They are often sold mislabeled as Texas cichlids, and females have a black spot on the dorsal fin.',
+    73, 82, 7.0, 8.0, 2, 1.5),
+
+  ('Midas Cichlid', 'Amphilophus citrinellus', 'Intermediate', 12.0, 0.02692, 3.03, 90, NULL, 2, false, 'aggressive',
+    'Midas cichlids are among the most aggressive cichlids, and males often kill females they are put in with, so buy an already-formed pair rather than putting adults together. A breeding pair will not tolerate tankmates. They dig and move decor daily, so use heavy rocks, a heater guard and a heavy lid.',
+    70, 79, 6.5, 8.0, 3, 1.2),
+
+  ('Red Devil Cichlid', 'Amphilophus labiatus', 'Intermediate', 12.0, 0.01413, 3.07, 90, NULL, 2, false, 'aggressive',
+    'Red devils are one of the most aggressive cichlids, and keeping more than one male is not an option in any tank. A breeding male will likely kill tankmates, and males can kill females they are not paired with, so buy an already-formed pair rather than putting adults together. They move gravel and decor daily, so use heavy rocks, a heater guard and a heavy lid.',
+    72, 82, 6.5, 8.0, 3, 1.7),
+
+  ('Black Belt Cichlid', 'Vieja maculicauda', 'Intermediate', 12.0, 0.02692, 3.03, 75, NULL, 2, false, 'aggressive',
+    'Black belts pair one male to one female and get exceptionally aggressive while guarding fry, so buy an already-formed pair rather than a group. They see smaller fish as food, so only keep them with fish of similar size and toughness. They eat mostly plant matter, so feed a vegetable-based diet, and give them sand or fine gravel.',
+    72, 81, 6.5, 8.0, 2, 1.3),
+
+  ('Synspilum Cichlid', 'Vieja melanurus', 'Intermediate', 14.0, 0.02138, 2.97, 90, NULL, NULL, false, 'aggressive',
+    'Synspilums grow fast and can reach a foot within a year, so plan for the adult size, not the size in the store. They pair one male to one female, and the sexes are hard to tell apart, so buy an already-formed pair rather than guessing. They turn aggressive toward other big cichlids, so tankmates must be large and sturdy.',
+    75, 86, 7.0, 8.0, 2, 1.3),
+
+  ('Trimac Cichlid', 'Amphilophus trimaculatus', 'Intermediate', 14.0, 0.03090, 3.09, 75, NULL, 2, false, 'aggressive',
+    'Trimacs pair one male to one female, but males often kill their female, even a bonded one, so buy an already-formed pair rather than putting adults together, and give plenty of rocks and caves where she can hide. They will not tolerate most tankmates and they eat other fish. They uproot plants and rearrange the tank, so use heavy decor.',
+    73, 86, 7.0, 8.0, 3, 1.0),
+
+  ('Jaguar Cichlid', 'Parachromis managuensis', 'Intermediate', 16.0, 0.02089, 3.05, 125, NULL, 2, false, 'aggressive',
+    'Jaguar cichlids are big predators that grow over a foot long and eat any fish they can swallow, so tankmates must be large and sturdy. They are always territorial, and a male can attack a female that is not ready to breed, so give plenty of caves and rocks for her to hide. They dig spawning pits, so use sand and decor too heavy to move.',
+    75, 86, 7.0, 8.0, 4, 1.4),
+
+  ('Wolf Cichlid', 'Parachromis dovii', 'Advanced', 24.0, 0.02455, 3.09, 180, NULL, 2, false, 'aggressive',
+    'Wolf cichlids, also sold as dovii, are one of the most aggressive cichlids and grow to about two feet. A dominant male kills other wolf cichlids, so never keep more than one male, and buy an already-formed pair rather than putting adults together. Pairs can still fight, so give the female rocks and caves to escape, and keep only very large, sturdy tankmates, since they eat any fish they can swallow.',
+    75, 82, 7.0, 8.0, 6, 1.2),
+
+  -- Color forms
+  ('Pink Convict', 'Amatitlania nigrofasciata (Pink)', 'Beginner', 5.0, 0.02692, 3.03, 30, NULL, NULL, false, 'aggressive',
+    'Pink convicts are a pale color form of the convict and act exactly the same: they breed easily and turn violent when they do, so tankmates must be sturdy. Once a pair forms, it drives other convicts out of its territory, so buy a pair rather than a mixed group, and give plenty of rocks, caves and flowerpots. Females usually show orange scales on the belly, though it can be faint on pinks.',
+    75, 82, 6.5, 8.0, NULL, 1.5),
+
+  ('Marble Convict', 'Amatitlania nigrofasciata (Marble)', 'Beginner', 5.0, 0.02692, 3.03, 30, NULL, NULL, false, 'aggressive',
+    'Marble convicts are a blotched color form of the convict and act exactly the same: they breed easily and turn violent when they do, so tankmates must be sturdy. Once a pair forms, it drives other convicts out of its territory, so buy a pair rather than a mixed group, and give plenty of rocks, caves and flowerpots. They dig and may uproot plants.',
+    75, 82, 6.5, 8.0, NULL, 1.5),
+
+  ('Electric Blue Jack Dempsey', 'Rocio octofasciata (Electric Blue)', 'Intermediate', 8.0, 0.02692, 3.03, 40, NULL, NULL, false, 'semi-aggressive',
+    'Electric blue Jack Dempseys are a line-bred form that stays smaller and calmer than regular Jack Dempseys, but they are more delicate and react badly to ammonia or nitrite spikes, so only add them to a fully cycled, stable tank. If you keep more than one, keep one male with at least 3 females, like regular Jack Dempseys. They can still eat small fish and dig, so give them caves and pick tankmates too big to swallow.',
+    72, 86, 6.5, 8.0, 2, 1.0),
+
+  ('Albino Jaguar Cichlid', 'Parachromis managuensis (Albino)', 'Intermediate', 16.0, 0.02089, 3.05, 125, NULL, 2, false, 'aggressive',
+    'Albino jaguars are a white form of the jaguar cichlid with the same needs: big predators that grow over a foot long and eat any fish they can swallow, so tankmates must be large and sturdy. A male can attack a female that is not ready to breed, so buy an already-formed pair and give plenty of caves and rocks for her to hide. They dig spawning pits, so use sand and heavy decor.',
+    75, 86, 7.0, 8.0, 4, 1.4),
+
+  -- Hybrids
+  ('Blood Parrot', 'Amphilophus x Vieja hybrid', 'Beginner', 8.0, 0.02692, 3.03, 55, NULL, NULL, true, 'semi-aggressive',
+    'Blood parrots are man-made hybrids whose small, beak-like mouth cannot fully close, so they struggle to compete for food with fast or aggressive eaters. Feed mini pellets they can scoop up, and keep them with calm, similar-sized fish, since they can still eat tiny fish. Two often end up with one bullying the other, so keep one or at least three, and give them caves since they get pushier when spawning. They are messy eaters, so filter well and remove leftovers.',
+    75, 82, 6.5, 8.0, 1, 0.8),
+
+  ('King Kong Parrot', 'Amphilophus x Vieja hybrid (King Kong)', 'Beginner', 10.0, 0.02692, 3.03, 55, NULL, NULL, false, 'semi-aggressive',
+    'King Kong parrots are a larger parrot hybrid with a normal working mouth, unlike blood parrots, so they eat more easily and can catch small fish. They are skittish when young and turn semi-aggressive as they mature, so give them caves and tall decor to block sight lines. Keep them with similar-sized fish rather than large cichlids, and filter well, since they are messy eaters.',
+    75, 82, 6.5, 8.0, 1.5, 1.0),
+
+  ('Flowerhorn', 'Amphilophus hybrid (Flowerhorn)', 'Intermediate', 14.0, 0.03090, 3.09, 75, NULL, 2, false, 'aggressive',
+    'Flowerhorns are aggressive man-made hybrids that grow 12 to 16 inches, and males are more aggressive than females. Tankmates rarely work, and if a pair starts to spawn, remove any other fish. They grow fast, reaching over half their adult size in their first year, so plan for the adult size from the start and feed a protein-rich diet without overfeeding.',
+    80, 86, 6.5, 8.0, 3, 1.1),
+
+  ('Red Texas Cichlid', 'Herichthys hybrid (Red Texas)', 'Intermediate', 12.0, 0.01445, 3.08, 75, NULL, 2, false, 'aggressive',
+    'Red Texas are man-made hybrids that are even more aggressive than regular Texas cichlids, so pick tankmates as carefully as you would for a flowerhorn. They stay fairly calm until about 6 inches, then turn aggressive, so plan for the adult fish, not the juvenile in the store. Many keepers house them alone.',
+    75, 82, 6.5, 7.5, 2, 2.1);
+
+	
+
+	
 -- ============================================
 -- TANK SIZES
 -- ============================================
